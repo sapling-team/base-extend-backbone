@@ -1,0 +1,12 @@
+{
+    "parser":"babel-eslint",
+    "ecmaFeatures":{
+        "js":true
+    },
+    "rules":{
+        "semi":2
+    },
+    "env":{
+        "es6":true
+    }
+}
