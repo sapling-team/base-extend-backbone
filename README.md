@@ -10,6 +10,7 @@
 
 开启`localStorage`缓存的使用方式：
 
+```JavaScript
 var WowerModel = BaseModel.extend({
     url:'{{url_prefix}}/mock/index.json',//填写请求地址
 	beforeEmit:function(options){
@@ -18,6 +19,7 @@ var WowerModel = BaseModel.extend({
 		this.expiration = 1; //设置缓存过期时间（1表示60*60*1000 一小时）
 	}
 });
+```
 
 > storageCache 设置为true
 >
@@ -25,18 +27,22 @@ var WowerModel = BaseModel.extend({
 
 不开启localStorage缓存的使用方式：
 
+```JavaScript
 var WowerModel = BaseModel.extend({
     url:'{{url_prefix}}/mock/mock.json'
 });
+```
 
 execute使用双回调来描述成功与失败：
 
+```JavaScript
 var model = new WowerModel();
 model.execute(function(response,model){
     //成功
 },function(error){
     //失败
 });
+```
 
 execute其他方法
 
