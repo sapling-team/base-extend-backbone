@@ -96,7 +96,7 @@ execute其他方法
 
 BaseView Life Cycle Image：
 
-![](#examples/img/BaseView Life Cycle.png)
+![](https://raw.githubusercontent.com/sapling-team/base-extend-backbone/master/examples/img/BaseView%20Life%20Cycle.png)
 
 ### baseRouter
 
@@ -118,4 +118,4 @@ BaseView Life Cycle Image：
 
 BaseRouter Life Cycle as BaseView
 
-![](#examples/img/BaseRouter Life Cycle as BaseView.png)
+![](https://raw.githubusercontent.com/sapling-team/base-extend-backbone/master/examples/img/BaseRouter%20Life%20Cycle%20as%20BaseView.png)
