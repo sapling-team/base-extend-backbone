@@ -2,7 +2,7 @@
     "name": "todomvc",
     "version": "1.0.0",
     "description": "",
-    "main": "webpack.dev.config.js",
+    "main": "",
     "scripts": {
         "test": "mocha --compilers js:babel-core/register --colors -w ./test/**/*.test.js",
         "dev": "webpack --watch --colors --config webpack.dev.config.js"
