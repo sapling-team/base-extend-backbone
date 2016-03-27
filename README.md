@@ -94,6 +94,9 @@ execute其他方法
 - $state 传递维护状态所需要的对象
 - $methods 传递内部可能使用的方法对象
 
+BaseView Life Cycle Image：
+
+![](#examples/img/BaseView Life Cycle.png)
 
 ### baseRouter
 
@@ -112,3 +115,7 @@ execute其他方法
 视图生命周期属性：
 
 - dealloc 如果此属性为true，那么视图实例在viewWillDisappear调用之后先执行销毁
+
+BaseRouter Life Cycle as BaseView
+
+![](#examples/img/BaseRouter Life Cycle as BaseView.png)
