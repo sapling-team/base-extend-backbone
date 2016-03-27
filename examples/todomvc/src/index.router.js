@@ -14,10 +14,10 @@ var AppRouter = BaseRouter.extend({
         'setting/:id':'settingRouter'
     },
     indexRouter:function(){
-        this.addLifeCycleHandler('index',IndexView)
+        this.addLifeCycleHelper('index',IndexView)
     },
     settingRouter:function(id){
-        this.addLifeCycleHandler('setting-' + id,SettingView,id)
+        this.addLifeCycleHelper('setting-' + id,SettingView,id)
     }
 })
 module.exports = {

@@ -23,9 +23,7 @@ var BaseView = Backbone.View.extend({
 	initialize:function(options){
 		//初始化参数
 		this._ICEOptions = options || {};
-		this.props = this._ICEOptions.props || {};
-		this.state = this._ICEOptions.state || {};
-		this.methods = this._ICEOptions.methods || {};
+
 		if (_.isFunction(this.beforeMount)){
 			this.beforeMount();
 		}else{
@@ -57,6 +55,9 @@ var BaseView = Backbone.View.extend({
 		this._ICEinitNode();
 		this._store = {};
 		this.__YYTPC__ = true;
+		this.$props = this._ICEOptions.props || {};
+		this.$state = this._ICEOptions.state || {};
+		this.$methods = this._ICEOptions.methods || {};
 		if (_.isFunction(this.ready)) {
 			this.ready(this._ICEOptions);
 		}else{

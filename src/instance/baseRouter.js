@@ -23,7 +23,7 @@ if (!Backbone) {
     throw new Error("import Backbone");
 };
 var BaseRouter = Backbone.Router.extend({
-    addLifeCycleHandler: function(name, view, parameter) {
+    addLifeCycleHelper: function(name, view, parameter) {
         var top = routerHashTop(name);
         var stackCheckHandler = function() {
             if (curr) {
@@ -59,7 +59,7 @@ var BaseRouter = Backbone.Router.extend({
         } else {
             stackCheckHandler();
             curr = parameter ? new view({
-                "parameter": parameter
+                '$parameter': parameter
             }) : new view();
             stack.push(curr.cid);
             curr._router = name;

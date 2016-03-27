@@ -46,10 +46,10 @@ webpackJsonp([0,1],[
 	        'setting/:id': 'settingRouter'
 	    },
 	    indexRouter: function indexRouter() {
-	        this.addLifeCycleHandler('index', _list2.default);
+	        this.addLifeCycleHelper('index', _list2.default);
 	    },
 	    settingRouter: function settingRouter(id) {
-	        this.addLifeCycleHandler('setting-' + id, _setting2.default, id);
+	        this.addLifeCycleHelper('setting-' + id, _setting2.default, id);
 	    }
 	});
 	module.exports = {
@@ -89,7 +89,7 @@ webpackJsonp([0,1],[
 	    throw new Error("import Backbone");
 	};
 	var BaseRouter = Backbone.Router.extend({
-	    addLifeCycleHandler: function addLifeCycleHandler(name, view, parameter) {
+	    addLifeCycleHelper: function addLifeCycleHelper(name, view, parameter) {
 	        var top = routerHashTop(name);
 	        var stackCheckHandler = function stackCheckHandler() {
 	            if (curr) {
@@ -125,7 +125,7 @@ webpackJsonp([0,1],[
 	        } else {
 	            stackCheckHandler();
 	            curr = parameter ? new view({
-	                "parameter": parameter
+	                '$parameter': parameter
 	            }) : new view();
 	            stack.push(curr.cid);
 	            curr._router = name;
@@ -340,9 +340,7 @@ webpackJsonp([0,1],[
 		initialize: function initialize(options) {
 			//初始化参数
 			this._ICEOptions = options || {};
-			this.props = this._ICEOptions.props || {};
-			this.state = this._ICEOptions.state || {};
-			this.methods = this._ICEOptions.methods || {};
+	
 			if (_.isFunction(this.beforeMount)) {
 				this.beforeMount();
 			} else {
@@ -374,6 +372,9 @@ webpackJsonp([0,1],[
 			this._ICEinitNode();
 			this._store = {};
 			this.__YYTPC__ = true;
+			this.$props = this._ICEOptions.props || {};
+			this.$state = this._ICEOptions.state || {};
+			this.$methods = this._ICEOptions.methods || {};
 			if (_.isFunction(this.ready)) {
 				this.ready(this._ICEOptions);
 			} else {
