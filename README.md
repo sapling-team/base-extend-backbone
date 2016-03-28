@@ -69,16 +69,15 @@ module.exports = config;
 
 ### base.View Life Cycle
 
-![](https://raw.githubusercontent.com/sapling-team/base-extend-backbone/master/examples/img/BaseView%20Life%20Cycle.png)
-
+![](https://raw.githubusercontent.com/sapling-team/base-extend-backbone/master/img/BaseView%20Life%20Cycle.png)
 
 ### base.Router Life Cycle as base.View
 
-![](https://raw.githubusercontent.com/sapling-team/base-extend-backbone/master/examples/img/BaseRouter%20Life%20Cycle%20as%20BaseView.png)
+![](https://raw.githubusercontent.com/sapling-team/base-extend-backbone/master/img/BaseRouter%20Life%20Cycle%20as%20BaseView.png)
 
 ### Fetch Info
 
-- [API文档](#doc/api.md)
-- [Demo 例子](#doc/fn.md)
+- [API文档](https://github.com/sapling-team/base-extend-backbone/blob/master/doc/api.md)
+- [Demo 例子](https://github.com/sapling-team/base-extend-backbone/blob/master/doc/fn.md)
 
 @icepy MIT
