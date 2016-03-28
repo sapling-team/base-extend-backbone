@@ -6,21 +6,17 @@
 
 'use strict'
 
+var Backbone = require('backbone');
 var warn = require('../util/warn');
 var stack = [];
 var routerHash = {};
 var curr = null;
 var router = null;
-var _win = window;
 var routerHashTop = function(key) {
     return routerHash[key];
 };
 var routerHashRmove = function(key) {
     delete routerHash[key];
-};
-var Backbone = _win.Backbone;
-if (!Backbone) {
-    throw new Error("import Backbone");
 };
 var BaseRouter = Backbone.Router.extend({
     addLifeCycleHelper: function(name, view, parameter) {

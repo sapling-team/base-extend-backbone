@@ -15,11 +15,7 @@
 
 
 'use strict';
-var _win = window;
-var Backbone = _win.Backbone
-if (!Backbone) {
-	throw new Error("import Backbone");
-};
+var Backbone = require('backbone')
 var Store = require('../store/locationStore');
 var Config = require('config');
 var Tools = require('../util/tools');
@@ -93,12 +89,12 @@ var BaseModel = Backbone.Model.extend({
 		this.fetch(_.extend({
 			success:function(model,response) {
 				response = self._ICEProcessData(response);
-				if (_.isFuntion(success)) {
+				if (_.isFunction(success)) {
 					success.call(self,response);
 				};
 			},
 			error:function(model,e){
-				if (_.isFuntion(error)) {
+				if (_.isFunction(error)) {
 					error.call(self,e);
 				};
 			}
@@ -110,12 +106,12 @@ var BaseModel = Backbone.Model.extend({
 		this.save(saveJSON,_.extend({
 			success:function(model,response){
 				response = self._ICEProcessData(response);
-				if (_.isFuntion(success)) {
+				if (_.isFunction(success)) {
 					success.call(self,response);
 				}
 			},
 			error:function(model,e){
-				if (_.isFuntion(error)) {
+				if (_.isFunction(error)) {
 					error.call(self,e);
 				};
 			}
@@ -125,12 +121,12 @@ var BaseModel = Backbone.Model.extend({
 		var self = this;
 		this.destroy({
 			success:function(model,response){
-				if (_.isFuntion(success)) {
+				if (_.isFunction(success)) {
 					success.call(self,response);
 				};
 			},
 			error:function(model,e){
-				if (_.isFuntion(error)) {
+				if (_.isFunction(error)) {
 					error.call(self,e);
 				};
 			}
@@ -146,12 +142,12 @@ var BaseModel = Backbone.Model.extend({
 		});
 		jsonpXHR.done(function(response,state,xhr){
 			response = self._ICEProcessData(response);
-			if (_.isFuntion(success)) {
+			if (_.isFunction(success)) {
 				success.call(self,response,state,xhr);
 			};
 		});
 		jsonpXHR.fail(function(xhr,state,errors){
-			if (_.isFuntion(error)) {
+			if (_.isFunction(error)) {
 				error.call(self,xhr,state,errors);
 			};
 		});
@@ -196,7 +192,7 @@ var BaseModel = Backbone.Model.extend({
 					return false;
 				};
 				var success = message.success;
-				if (_.isFuntion(success)) {
+				if (_.isFunction(success)) {
 					setTimeout(function(){
 						data = self._ICEProcessData(data,true);
 						success.call(self,data);
@@ -209,7 +205,7 @@ var BaseModel = Backbone.Model.extend({
 	},
 	_ICEProcessData:function(response,before){
 		//如果自定义了formatter方法，先对数据进行格式化
-		if (_.isFuntion(this.formatter)) {
+		if (_.isFunction(this.formatter)) {
 			response = this.formatter(response);
 		};
 		//如果开启了缓存，对数据源进行本地存储
@@ -420,12 +416,13 @@ var BaseModel = Backbone.Model.extend({
 					store = value;
 					break;
 			};
-			if (this._view && this._view.__YYTPC__) {
-			 	var j = this._onQueue.length;
-			 	while(j--){
-			 		this._view.trigger(this._onQueue[j]);
-			 	}
-			}
+			this.set(this._store);
+			// if (this._view && this._view.__YYTPC__) {
+			//  	var j = this._onQueue.length;
+			//  	while(j--){
+			//  		this._view.trigger(this._onQueue[j]);
+			//  	}
+			// }
 		}
 	},
 	/**

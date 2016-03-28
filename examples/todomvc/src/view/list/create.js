@@ -1,21 +1,6 @@
 import BaseView from 'BaseView'
 import cilpTemp from '../../template/list/create.html'
 
-class ViewCSS{
-    contractor(style){
-        this.style = style
-    }
-}
-
-class Pay extends ViewCSS{
-     contractor(el){
-        this.el = el
-     }
-     reset(){
-        this.el.css(this.style)
-     }
-}
-
 const items = [
     '点击→播放专题页呈现，包括两侧挂幅前贴片',
     'MV播放',
