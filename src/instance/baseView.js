@@ -11,6 +11,7 @@
 'use strict';
 
 var Backbone = require('backbone');
+var tplEng = require('tplEng');
 var warn = require('../util/warn');
 var tools = require('../util/tools');
 var error = require('../util/debug').error;
@@ -81,6 +82,15 @@ var BaseView = Backbone.View.extend({
 		if (_.isFunction(this.destroyed)) {
 			this.destroyed();
 		};
+	},
+	/**
+	 * [compileHTML 编译模板]
+	 * @param  {[type]} tplStr [description]
+	 * @param  {[type]} data   [description]
+	 * @return {[type]}        [description]
+	 */
+	compileHTML:function(tplStr,data){
+		return tplEng.compile(tplStr)(data);
 	},
 	/**
 	 * [broadcast 触发所有子组件相应的事件]

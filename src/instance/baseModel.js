@@ -27,7 +27,7 @@ var env = Config.env[Config.scheme];
 var BaseModel = Backbone.Model.extend({
 	options:{},
 	initialize:function(options){
-		this._store = {};
+		this._store = this.props || {};
 		this._view = null;
 		this._onQueue = [];
 		this._original = null;

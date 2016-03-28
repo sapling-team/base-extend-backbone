@@ -61,9 +61,13 @@ module.exports = config;
 
 这意味着你需要在构建脚本中启用`config`和`tplEng`两个别名分别对应`artTemplate`和`你的config.js`配置文件。
 
-### 
+### 设计思路
 
-### BaseModel
+`Model`与传统的Model有一些区别，每一个Model都将是一个实体（entity）与操作的结合，一个Model即可以定义实体，也可以使用当前的Model实例来操作实体。唯一不一样的是，页面的数据往往来自于请求，一个Model对应一个请求，在操作上有专注的特点，更容易让人理解。
+
+`View`的设计主要是增加了自身实例的生命周期，将编程分为几个阶段，跟容易对它进行维护。
+
+### Model
 
 默认是关闭localStorage缓存的，原则的设计是使用内存缓存，本地缓存需要支持LocalStorage特性（HTML5 API）
 
@@ -167,7 +171,7 @@ var sort3 = this.$sort('items',function(){
 });
 ```
 
-### BaseView
+### View
 
 构造器方法
 
@@ -197,7 +201,7 @@ BaseView Life Cycle Image：
 
 ![](https://raw.githubusercontent.com/sapling-team/base-extend-backbone/master/examples/img/BaseView%20Life%20Cycle.png)
 
-### BaseRouter
+### Router
 
 将视图类添加到生命周期管理helper方法中：
 
