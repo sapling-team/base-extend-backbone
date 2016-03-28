@@ -18,6 +18,7 @@ debug.warn = function(msg,e){
 			console.warn(warning.stack);
 		}
 	};
+	return hasConsole;
 };
 debug.error = function(msg){
 	var error = new Error(msg);
