@@ -14,7 +14,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "git@github.com:sapling-team/base-extend-backbone.git"
+        "url": "git+https://github.com/sapling-team/base-extend-backbone.git"
     },
     "keywords": [
         "extend",
