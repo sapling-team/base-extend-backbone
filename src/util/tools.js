@@ -85,5 +85,16 @@
             return isNaN(number) ? value : number;
         }
     };
+    tools.mergeData = function(to,from){
+        var key,toVal,fromVal;
+        for(key in from){
+            toVal = to[key];
+            fromVal = from[key];
+            if (tools.isPlainObject(toVal) && tools.isPlainObject(fromVal)) {
+                tools.mergeData(toVal,fromVal);
+            }
+        }
+        return to;
+    };
     return tools;
 });

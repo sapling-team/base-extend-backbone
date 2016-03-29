@@ -49,11 +49,7 @@ var BaseView = Backbone.View.extend({
 	},
 	_ICEObject:function(){
 		this._ICEinitNode();
-		this._store = {};
 		this.__YYTPC__ = true;
-		this.$props = this._ICEOptions.props || {};
-		this.$state = this._ICEOptions.state || {};
-		this.$methods = this._ICEOptions.methods || {};
 		if (_.isFunction(this.ready)) {
 			this.ready(this._ICEOptions);
 		}else{

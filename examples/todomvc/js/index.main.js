@@ -12,7 +12,7 @@ webpackJsonp([0,1],[
 	
 	_index2.default.start();
 	
-	__webpack_require__(18);
+	__webpack_require__(19);
 
 /***/ },
 /* 1 */
@@ -24,11 +24,11 @@ webpackJsonp([0,1],[
 	
 	var _BaseRouter2 = _interopRequireDefault(_BaseRouter);
 	
-	var _setting = __webpack_require__(6);
+	var _setting = __webpack_require__(7);
 	
 	var _setting2 = _interopRequireDefault(_setting);
 	
-	var _list = __webpack_require__(7);
+	var _list = __webpack_require__(8);
 	
 	var _list2 = _interopRequireDefault(_list);
 	
@@ -72,8 +72,8 @@ webpackJsonp([0,1],[
 	
 	'use strict';
 	
-	var Backbone = __webpack_require__(20);
-	var warn = __webpack_require__(3);
+	var Backbone = __webpack_require__(3);
+	var warn = __webpack_require__(4);
 	var stack = [];
 	var routerHash = {};
 	var curr = null;
@@ -171,6 +171,12 @@ webpackJsonp([0,1],[
 
 /***/ },
 /* 3 */
+/***/ function(module, exports) {
+
+	module.exports = window.Backbone;
+
+/***/ },
+/* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -181,8 +187,8 @@ webpackJsonp([0,1],[
 	
 	'use strict';
 	
-	var Config = __webpack_require__(4);
-	var Debug = __webpack_require__(5);
+	var Config = __webpack_require__(5);
+	var Debug = __webpack_require__(6);
 	
 	var warn = function warn(msg, e) {
 	  if (Config.debug) {
@@ -192,7 +198,7 @@ webpackJsonp([0,1],[
 	module.exports = warn;
 
 /***/ },
-/* 4 */
+/* 5 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -216,7 +222,7 @@ webpackJsonp([0,1],[
 	module.exports = CONFIG;
 
 /***/ },
-/* 5 */
+/* 6 */
 /***/ function(module, exports) {
 
 	/**
@@ -250,30 +256,30 @@ webpackJsonp([0,1],[
 	module.exports = debug;
 
 /***/ },
-/* 6 */
+/* 7 */
 /***/ function(module, exports) {
 
 	"use strict";
 
 /***/ },
-/* 7 */
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var _BaseView = __webpack_require__(8);
+	var _BaseView = __webpack_require__(9);
 	
 	var _BaseView2 = _interopRequireDefault(_BaseView);
 	
-	var _create = __webpack_require__(12);
+	var _create = __webpack_require__(13);
 	
 	var _create2 = _interopRequireDefault(_create);
 	
-	var _index = __webpack_require__(14);
+	var _index = __webpack_require__(15);
 	
 	var _index2 = _interopRequireDefault(_index);
 	
-	var _create3 = __webpack_require__(15);
+	var _create3 = __webpack_require__(16);
 	
 	var _create4 = _interopRequireDefault(_create3);
 	
@@ -302,29 +308,31 @@ webpackJsonp([0,1],[
 	        this.on('render', function () {});
 	        console.log(create);
 	        var model = new _create4.default();
-	        model.setView(this);
-	        model.setOnQueueKeys(['render']);
+	        console.log('model', model);
 	        model.execute(function (response) {
-	            console.log('$get items', this.$get('items'));
-	            console.log('$get debug', this.$get('debug'));
-	            console.log('$get trace.warn', this.$get('trace.warn'));
-	            this.$set('trace.warn', { 'msg': 'msg' });
-	            console.log('$get 全部的数据', this.$get());
-	            var id1 = this.$filter('items', { "id": 1 });
+	            console.log(this);
+	            console.log(response);
+	            console.log(this.manager);
+	            console.log('$get items', this.manager.$get('items'));
+	            console.log('$get debug', this.manager.$get('debug'));
+	            console.log('$get trace.warn', this.manager.$get('trace.warn'));
+	            this.manager.$set('trace.warn', { 'msg': 'msg' });
+	            console.log('$get 全部的数据', this.manager.$get());
+	            var id1 = this.manager.$filter('items', { "id": 1 });
 	            console.log('$filter id=1', id1);
-	            var id2 = this.$filter('items', function (v, i) {
+	            var id2 = this.manager.$filter('items', function (v, i) {
 	                if (v.id == 2) {
 	                    return true;
 	                }
 	            });
 	            console.log('$filter id=2', id2);
-	            var icepy = this.$filter('items2', 'icepy');
+	            var icepy = this.manager.$filter('items2', 'icepy');
 	            console.log('$filter icepy', icepy);
-	            var sort1 = this.$sort('items', 'id.<');
+	            var sort1 = this.manager.$sort('items', 'id.<');
 	            console.log('降序', sort1);
-	            var sort2 = this.$sort('items', 'id.>');
+	            var sort2 = this.manager.$sort('items', 'id.>');
 	            console.log('升序', sort2);
-	            var sort3 = this.$sort('items', function () {
+	            var sort3 = this.manager.$sort('items', function () {
 	                return true;
 	            });
 	        }, function () {});
@@ -340,7 +348,7 @@ webpackJsonp([0,1],[
 	module.exports = IndexView;
 
 /***/ },
-/* 8 */
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -355,11 +363,11 @@ webpackJsonp([0,1],[
 	
 	'use strict';
 	
-	var Backbone = __webpack_require__(20);
-	var tplEng = __webpack_require__(9);
-	var warn = __webpack_require__(3);
-	var tools = __webpack_require__(10);
-	var error = __webpack_require__(5).error;
+	var Backbone = __webpack_require__(3);
+	var tplEng = __webpack_require__(10);
+	var warn = __webpack_require__(4);
+	var tools = __webpack_require__(11);
+	var error = __webpack_require__(6).error;
 	var BaseView = Backbone.View.extend({
 		initialize: function initialize(options) {
 			//初始化参数
@@ -394,11 +402,7 @@ webpackJsonp([0,1],[
 		},
 		_ICEObject: function _ICEObject() {
 			this._ICEinitNode();
-			this._store = {};
 			this.__YYTPC__ = true;
-			this.$props = this._ICEOptions.props || {};
-			this.$state = this._ICEOptions.state || {};
-			this.$methods = this._ICEOptions.methods || {};
 			if (_.isFunction(this.ready)) {
 				this.ready(this._ICEOptions);
 			} else {
@@ -490,7 +494,7 @@ webpackJsonp([0,1],[
 	module.exports = BaseView;
 
 /***/ },
-/* 9 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;"use strict";
@@ -641,7 +645,7 @@ webpackJsonp([0,1],[
 	}();
 
 /***/ },
-/* 10 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global, module) {/**
@@ -732,12 +736,23 @@ webpackJsonp([0,1],[
 	            return isNaN(number) ? value : number;
 	        }
 	    };
+	    tools.mergeData = function (to, from) {
+	        var key, toVal, fromVal;
+	        for (key in from) {
+	            toVal = to[key];
+	            fromVal = from[key];
+	            if (tools.isPlainObject(toVal) && tools.isPlainObject(fromVal)) {
+	                tools.mergeData(toVal, fromVal);
+	            }
+	        }
+	        return to;
+	    };
 	    return tools;
 	});
-	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(11)(module)))
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(12)(module)))
 
 /***/ },
-/* 11 */
+/* 12 */
 /***/ function(module, exports) {
 
 	module.exports = function(module) {
@@ -753,16 +768,16 @@ webpackJsonp([0,1],[
 
 
 /***/ },
-/* 12 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var _BaseView = __webpack_require__(8);
+	var _BaseView = __webpack_require__(9);
 	
 	var _BaseView2 = _interopRequireDefault(_BaseView);
 	
-	var _create = __webpack_require__(13);
+	var _create = __webpack_require__(14);
 	
 	var _create2 = _interopRequireDefault(_create);
 	
@@ -793,19 +808,19 @@ webpackJsonp([0,1],[
 	module.exports = CreateView;
 
 /***/ },
-/* 13 */
+/* 14 */
 /***/ function(module, exports) {
 
 	module.exports = "{{each items as item i}}\r\n    <li><a href=\"#\">{{item}}</a></li>\r\n{{/each}}\r\n"
 
 /***/ },
-/* 14 */
+/* 15 */
 /***/ function(module, exports) {
 
 	module.exports = "<div id=\"indexId\" class=\"am-container\">\r\n    <header class=\"header\">\r\n        <span class=\"title\">@icepy Test Todo App</span>\r\n    </header>\r\n    <div id=\"list\" class=\"content\">\r\n        <ul class=\"am-list\">\r\n\r\n        </ul>\r\n    </div>\r\n    <footer class=\"footer\">\r\n        <span class=\"title\">@YYT PC Demo</span>\r\n    </footer>\r\n</div>\r\n"
 
 /***/ },
-/* 15 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -816,16 +831,20 @@ webpackJsonp([0,1],[
 	
 	'use strict';
 	
-	var BaseModel = __webpack_require__(16);
+	var BaseModel = __webpack_require__(17);
 	
 	var Model = BaseModel.extend({
-		url: '{{url_prefix}}/examples/todomvc/mock/default.json', //填写请求地址
+		url: '{{url_prefix}}/examples/todomvc/mock/default.json?id={{id}}', //填写请求地址
 		beforeEmit: function beforeEmit(options) {
 			// 如果需要开启对请求数据的本地缓存，可将下列两行注释去掉
 			// this.storageCache = true; //开启本地缓存
 			// this.expiration = 2; //设置缓存过期时间（1表示60*60*1000 一小时）
 		},
-		props: {}
+		defaultEntity: function defaultEntity() {
+			return {
+				"default": 1
+			};
+		}
 		// formatter:function(response){
 		//		//formatter方法可以格式化数据
 		// }
@@ -840,7 +859,7 @@ webpackJsonp([0,1],[
 	module.exports = Model;
 
 /***/ },
-/* 16 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -860,23 +879,20 @@ webpackJsonp([0,1],[
 	
 	'use strict';
 	
-	var Backbone = __webpack_require__(20);
-	var Store = __webpack_require__(17);
-	var Config = __webpack_require__(4);
-	var Tools = __webpack_require__(10);
-	var warn = __webpack_require__(3);
+	var Backbone = __webpack_require__(3);
+	var Store = __webpack_require__(18);
+	var Config = __webpack_require__(5);
+	var Tools = __webpack_require__(11);
+	var warn = __webpack_require__(4);
+	var ManagedObject = __webpack_require__(21);
 	var uid = 1314;
 	var expiration = Store.expiration;
-	var baseModelSort = [];
 	var env = Config.env[Config.scheme];
 	var BaseModel = Backbone.Model.extend({
 		options: {},
 		initialize: function initialize(options) {
-			this._store = this.props || {};
-			this._view = null;
-			this._onQueue = [];
-			this._original = null;
 			this.parameter = null;
+			this.manager = new ManagedObject({ entity: this.defaultEntity() || {} });
 			if (_.isFunction(this.beforeEmit)) {
 				this.beforeEmit(options);
 			};
@@ -884,10 +900,6 @@ webpackJsonp([0,1],[
 			if (!this.setEnv) {
 				//默认使用内置{url_prefix}处理
 				this._ICESetEnv();
-			};
-			if (_.isString(this.url)) {
-				this.url = this.url.split('?')[0];
-				this.hostname = this.url;
 			};
 		},
 		_ICESetEnv: function _ICESetEnv() {
@@ -897,27 +909,6 @@ webpackJsonp([0,1],[
 			} else {
 				warn('你应该正确的配置{{url_prefix}}，在你的config.js文件中');
 			}
-		},
-		_ICESort: function _ICESort(data, fun) {
-			var n = data.length;
-			if (n < 2) {
-				return data;
-			};
-			var i = 0;
-			var j = i + 1;
-			var logic, temp, key;
-			for (; i < j; i++) {
-				for (j = i + 1; j < n; j++) {
-					logic = fun.call(this, data[i], data[j]);
-					key = (typeof logic === 'number' ? logic : !!logic ? 1 : 0) > 0 ? true : false;
-					if (key) {
-						temp = data[i];
-						data[i] = data[j];
-						data[j] = temp;
-					}
-				}
-			}
-			return data;
 		},
 		_ICEOptions: function _ICEOptions() {
 			var self = this;
@@ -966,10 +957,10 @@ webpackJsonp([0,1],[
 				})
 			}, options));
 		},
-		_ICESave: function _ICESave(saveJSON, success, error) {
+		_ICESave: function _ICESave(HTTPBody, success, error) {
 			var self = this;
 			var options = _.extend(this._ICEOptions(), this.options);
-			this.save(saveJSON, _.extend({
+			this.save(HTTPBody, _.extend({
 				success: function (_success2) {
 					function success(_x5, _x6) {
 						return _success2.apply(this, arguments);
@@ -1038,11 +1029,11 @@ webpackJsonp([0,1],[
 				})
 			});
 		},
-		_ICEJSONP: function _ICEJSONP(success, error) {
+		_ICEJSONP: function _ICEJSONP(parameter, success, error) {
 			var self = this;
 			var jsonpXHR = $.ajax({
 				url: this.url,
-				data: this.parameter || {},
+				data: parameter || {},
 				dataType: 'jsonp',
 				jsonp: 'callback'
 			});
@@ -1061,25 +1052,26 @@ webpackJsonp([0,1],[
 		_ICESendHelper: function _ICESendHelper(message) {
 			var success = message.success;
 			var error = message.error;
-			if (message.type !== 'GET') {
-				this.url = this.hostname;
+			if (message.url) {
+				//如果存在url，将this的url替换
+				this.url = message.url;
 			};
 			switch (message.type) {
 				case 'POST':
-					this._ICESave(message.saveJSON, success, error);
+					this._ICESave(message.HTTPBody, success, error);
 					break;
 				case 'PUT':
-					var id = message.saveJSON.id;
+					var id = message.HTTPBody.id;
 					if (!id && id !== 0) {
-						message.saveJSON.id = 'icepy' + uid++;
+						message.HTTPBody.id = 'icepy' + uid++;
 					};
-					this._ICESave(message.saveJSON, success, error);
+					this._ICESave(message.HTTPBody, success, error);
 					break;
 				case 'DELETE':
 					this._ICEDestroy(success, error);
 					break;
 				case 'JSONP':
-					this._ICEJSONP(success, error);
+					this._ICEJSONP(message.parameter, success, error);
 					break;
 				default:
 					this._ICEFetch(success, error);
@@ -1120,7 +1112,8 @@ webpackJsonp([0,1],[
 					expiration.set(this.url, response, this.expiration);
 				};
 			};
-			this.$set(response);
+			this.manager.$update(response);
+			this.set(response);
 			return response;
 		},
 		/**
@@ -1129,12 +1122,20 @@ webpackJsonp([0,1],[
 	  * @param  {[type]} error   [description]
 	  * @return {[type]}         [description]
 	  */
-		execute: function execute(success, error) {
+		execute: function execute() {
 			var message = {
-				type: 'GET',
-				success: success,
-				error: error
+				type: 'GET'
 			};
+			var args = Tools.toArray(arguments);
+			var g = args.splice(0, 1)[0];
+			if (Tools.isPlainObject(g)) {
+				message = _.extend(message, g);
+				message.success = args[0];
+				message.error = args[1];
+			} else {
+				message.success = g;
+				message.error = args[0];
+			}
 			this._ICESendMessage(message);
 		},
 		/**
@@ -1149,39 +1150,39 @@ webpackJsonp([0,1],[
 				success: success,
 				error: error
 			};
-			this._ICESendMessage(message);
+			this.execute(message);
 		},
 		/**
 	  * [executePOST 发起POST请求]
-	  * @param  {[type]} saveJSON [description]
+	  * @param  {[type]} HTTPBody [description]
 	  * @param  {[type]} success  [description]
 	  * @param  {[type]} error    [description]
 	  * @return {[type]}          [description]
 	  */
-		executePOST: function executePOST(saveJSON, success, error) {
+		executePOST: function executePOST(HTTPBody, success, error) {
 			var message = {
 				type: 'POST',
-				saveJSON: saveJSON,
+				HTTPBody: HTTPBody,
 				success: success,
 				error: error
 			};
-			this._ICESendMessage(message);
+			this.execute(message);
 		},
 		/**
 	  * [executePUT 发起PUT请求]
-	  * @param  {[type]} saveJSON [description]
+	  * @param  {[type]} HTTPBody [description]
 	  * @param  {[type]} success  [description]
 	  * @param  {[type]} error    [description]
 	  * @return {[type]}          [description]
 	  */
-		executePUT: function executePUT(saveJSON, success, error) {
+		executePUT: function executePUT(HTTPBody, success, error) {
 			var message = {
 				type: 'PUT',
-				saveJSON: saveJSON,
+				HTTPBody: HTTPBody,
 				success: success,
 				error: error
 			};
-			this._ICESendMessage(message);
+			this.execute(message);
 		},
 		/**
 	  * [executeDELETE 发起delete请求]
@@ -1193,7 +1194,7 @@ webpackJsonp([0,1],[
 				success: success,
 				error: error
 			};
-			this._ICESendMessage(message);
+			this.execute(message);
 		},
 		/**
 	  * [executeJSONP 发起JSONP跨域请求]
@@ -1202,14 +1203,13 @@ webpackJsonp([0,1],[
 	  * @return {[type]}         [description]
 	  */
 		executeJSONP: function executeJSONP(parameter, success, error) {
-			this.parameter = null;
-			this.parameter = parameter;
 			var message = {
 				type: 'JSONP',
 				success: success,
-				error: error
+				error: error,
+				parameter: parameter
 			};
-			this._ICESendMessage(message);
+			this.execute(message);
 		},
 		/**
 	  * [setChangeURL 辅助拼接URL参数]
@@ -1239,211 +1239,19 @@ webpackJsonp([0,1],[
 			this.headers = headers;
 		},
 		/**
-	  * [setView 设置view-model关系]
-	  * @param {[type]} view [description]
-	  */
-		setView: function setView(view) {
-			this._view = view;
-		},
-		/**
-	  * [setOnQueueKeys 设置订阅的渲染事件名队列]
-	  * @param {[type]} value [description]
-	  */
-		setOnQueueKeys: function setOnQueueKeys(value) {
-			if (!_.isArray(value)) {
-				warn('需要传入一个事件keys');
-			} else {
-				this._onQueue.length = 0;
-				this._onQueue = value;
-			}
-		},
-		/**
-	  * [$get 从模型获取数据]
-	  * @param  {[type]} expression [description]
-	  * @return {[type]}            [description]
-	  */
-		$get: function $get(expression) {
-			if (!expression) {
-				return this._store;
-			}
-			var attrNodes = expression.split('.');
-			var lh = attrNodes.length;
-			if (lh > 0) {
-				var node = attrNodes[0];
-				var i = 0;
-				var store = this._store;
-				while (node) {
-					i++;
-					store = store[node];
-					node = attrNodes[i];
-				}
-				return store;
-			}
-		},
-		/**
-	  * [$set 向模型设置新的数据]
-	  * @param {[type]} expression [description]
-	  * @param {[type]} value      [description]
-	  */
-		$set: function $set(expression, value, options) {
-			if (expression == null) {
-				return this;
-			};
-			if (Tools.isPlainObject(expression)) {
-				this._store = null;
-				this._store = expression;
-				this.set(this._store);
-				return false;
-			}
-			var attrNodes = expression.split('.');
-			var lh = attrNodes.length;
-			if (lh > 0) {
-				var i = 0;
-				var node = attrNodes[i];
-				var store = this._store;
-				if (lh !== 1) {
-					while (node) {
-						i++;
-						store = store[node];
-						node = attrNodes[i];
-						if (i > lh - 2) {
-							break;
-						}
-					}
-				}
-				switch (Tools.toType(store)) {
-					case '[object Object]':
-						store[node] = value;
-						break;
-					case '[object Array]':
-						store[Tools.exportToNumber(node)] = value;
-						break;
-					default:
-						store = value;
-						break;
-				};
-				this.set(this._store);
-				// if (this._view && this._view.__YYTPC__) {
-				//  	var j = this._onQueue.length;
-				//  	while(j--){
-				//  		this._view.trigger(this._onQueue[j]);
-				//  	}
-				// }
-			}
-		},
-		/**
-	  * [$filter 对_store数据进行筛选]
-	  * @param  {[type]} expression [description]
-	  * @param  {[type]} value      [description]
-	  * @return {[type]}            [description]
-	  */
-		$filter: function $filter(expression, value) {
-			//arguments
-			var data = this.$get(expression);
-			var result = [];
-			if (_.isArray(data)) {
-				var i = data.length;
-				var n;
-				while (i--) {
-					var val = data[i];
-					switch (Tools.toType(value)) {
-						case '[object Object]':
-							n = true;
-							for (var k in value) {
-								if (!(val[k] === value[k])) {
-									n = null;
-									break;
-								}
-							}
-							break;
-						case '[object Function]':
-							n = value(val, i);
-							break;
-						default:
-							n = val === value;
-							break;
-					}
-					if (n) {
-						result.push(val);
-					}
-				};
-			};
-			return result;
-		},
-		/**
-	  * [$sort 对_store中的数据进行排序]
-	  * @param  {[type]} expression [description]
-	  * @param  {[type]} value      [description]
-	  * @return {[type]}            [description]
-	  */
-		$sort: function $sort(expression, value) {
-			//arguments
-			// > 大于 true
-			// < 小于 false
-			// items.id
-			var data = this.$get(expression);
-			baseModelSort.length = 0;
-			if (_.isArray(data)) {
-				switch (Tools.toType(value)) {
-					case '[object Function]':
-						baseModelSort = this._ICESort(data, value);
-						break;
-					default:
-						if (typeof value === 'string') {
-							var attrNodes = value.split('.');
-							var logic = null;
-							var lh = attrNodes.length - 1;
-							switch (attrNodes[lh]) {
-								case '>':
-									logic = true;
-									break;
-								case '<':
-									logic = false;
-									break;
-								default:
-									return baseModelSort;
-									break;
-							};
-							if (logic !== null) {
-								return this._ICESort(data, function (val1, val2) {
-									var node = attrNodes[0];
-									var i = 0;
-									while (node) {
-										val1 = val1[node];
-										val2 = val2[node];
-										i++;
-										if (i === lh) {
-											break;
-										};
-										node = attrNodes[i];
-									}
-									if (logic) {
-										return val1 > val2;
-									} else {
-										return val1 < val2;
-									};
-								});
-							}
-						};
-						break;
-				}
-			};
-			return baseModelSort;
-		},
-		/**
-	  * [$updateStore 将_store数据进行更新]
+	  * [setUpdateStore 将实体数据更新到本地缓存]
 	  * @return {[type]} [description]
 	  */
-		$updateStore: function $updateStore() {
+		setUpdateStore: function setUpdateStore() {
 			if (Store.enabled) {
-				expiration.set(self.url, this._store, self.expiration);
+				expiration.set(self.url, this.manager.$get(), self.expiration);
 			};
 		}
 	});
 	module.exports = BaseModel;
 
 /***/ },
-/* 17 */
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global, module) {/**
@@ -1710,20 +1518,226 @@ webpackJsonp([0,1],[
 		};
 		return store;
 	});
-	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(11)(module)))
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(12)(module)))
 
 /***/ },
-/* 18 */
+/* 19 */
 /***/ function(module, exports) {
 
 	// removed by extract-text-webpack-plugin
 
 /***/ },
-/* 19 */,
-/* 20 */
-/***/ function(module, exports) {
+/* 20 */,
+/* 21 */
+/***/ function(module, exports, __webpack_require__) {
 
-	module.exports = window.Backbone;
+	'use strict';
+	
+	/**
+	 * @time 2016年3月29日
+	 * @author icepy
+	 * @info 实体管理类
+	 */
+	var warn = __webpack_require__(4);
+	var Tools = __webpack_require__(11);
+	var baseModelSort = [];
+	
+	var ManagedObject = function ManagedObject(options) {
+	    this.entity = options.entity || {};
+	};
+	
+	ManagedObject.prototype.$update = function (obj) {
+	    var entity = _.extend(this.entity, obj);
+	    this.entity = null;
+	    this.entity = entity;
+	};
+	/**
+	 * [$get 从实体中获取数据，无参将返回所有数据，参数使用.结构化表达式（this.$get('items.0.id')）]
+	 * @param  {[type]} expression [description]
+	 * @return {[type]}            [description]
+	 */
+	ManagedObject.prototype.$get = function (expression) {
+	    if (!expression) {
+	        return this.entity;
+	    }
+	    var attrNodes = expression.split('.');
+	    var lh = attrNodes.length;
+	    if (lh > 0) {
+	        var node = attrNodes[0];
+	        var i = 0;
+	        var entity = this.entity;
+	        while (node) {
+	            i++;
+	            entity = entity[node];
+	            node = attrNodes[i];
+	        }
+	        return entity;
+	    }
+	};
+	/**
+	 * [$set 向实体内部更新数据，以key/value的方式，第一个参数使用结构化表达式，第二个参数可以是任意类型的数据]
+	 * @param {[type]} expression [description]
+	 * @param {[type]} value      [description]
+	 */
+	ManagedObject.prototype.$set = function (expression, value, options) {
+	    if (expression === null || expression === undefined) {
+	        warn('存储器不允许传递一个null或者undefined');
+	        return this;
+	    };
+	    if (Tools.isPlainObject(expression)) {
+	        this.entity = null;
+	        this.entity = expression;
+	        return this.entity;
+	    };
+	    var attrNodes = expression.split('.');
+	    var lh = attrNodes.length;
+	    if (lh > 0) {
+	        var i = 0;
+	        var node = attrNodes[i];
+	        var entity = this.entity;
+	        if (lh !== 1) {
+	            while (node) {
+	                i++;
+	                entity = entity[node];
+	                node = attrNodes[i];
+	                if (i > lh - 2) {
+	                    break;
+	                }
+	            }
+	        }
+	        switch (Tools.toType(entity)) {
+	            case '[object Object]':
+	                entity[node] = value;
+	                break;
+	            case '[object Array]':
+	                entity[Tools.exportToNumber(node)] = value;
+	                break;
+	            default:
+	                entity = value;
+	                break;
+	        };
+	    }
+	};
+	/**
+	 * [$filter 向实体内部的某项数据进行筛选，第一个参数是要筛选数据的.结构化表达式，第二个参数是筛选根据]
+	 * @param  {[type]} expression [description]
+	 * @param  {[type]} value      [description]
+	 * @return {[type]}            [description]
+	 */
+	ManagedObject.prototype.$filter = function (expression, value) {
+	    var data = this.$get(expression);
+	    var result = [];
+	    if (_.isArray(data)) {
+	        var i = data.length;
+	        var n;
+	        while (i--) {
+	            var val = data[i];
+	            switch (Tools.toType(value)) {
+	                case '[object Object]':
+	                    n = true;
+	                    for (var k in value) {
+	                        if (!(val[k] === value[k])) {
+	                            n = null;
+	                            break;
+	                        }
+	                    }
+	                    break;
+	                case '[object Function]':
+	                    n = value(val, i);
+	                    break;
+	                default:
+	                    n = val === value;
+	                    break;
+	            };
+	            if (n) {
+	                result.push(val);
+	            };
+	        };
+	    };
+	    return result;
+	};
+	/**
+	 * [$sort 对实体内部的某项数据进行排序，第二个参数是要排序数据的.结构化表达式，第二个参数是排序的根据]
+	 * @param  {[type]} expression [description]
+	 * @param  {[type]} value      [description]
+	 * @return {[type]}            [description]
+	 */
+	ManagedObject.prototype.$sort = function (expression, value) {
+	    // > 大于 true
+	    // < 小于 false
+	    var data = this.$get(expression);
+	    baseModelSort.length = 0;
+	    if (_.isArray(data)) {
+	        switch (Tools.toType(value)) {
+	            case '[object Function]':
+	                baseModelSort = this._sort(data, value);
+	                break;
+	            default:
+	                if (typeof value === 'string') {
+	                    var attrNodes = value.split('.');
+	                    var logic = null;
+	                    var lh = attrNodes.length - 1;
+	                    switch (attrNodes[lh]) {
+	                        case '>':
+	                            logic = true;
+	                            break;
+	                        case '<':
+	                            logic = false;
+	                            break;
+	                        default:
+	                            return baseModelSort;
+	                            break;
+	                    };
+	                    if (logic !== null) {
+	                        return this._sort(data, function (val1, val2) {
+	                            var node = attrNodes[0];
+	                            var i = 0;
+	                            while (node) {
+	                                val1 = val1[node];
+	                                val2 = val2[node];
+	                                i++;
+	                                if (i === lh) {
+	                                    break;
+	                                };
+	                                node = attrNodes[i];
+	                            }
+	                            if (logic) {
+	                                return val1 > val2;
+	                            } else {
+	                                return val1 < val2;
+	                            };
+	                        });
+	                    }
+	                };
+	                break;
+	        }
+	    };
+	    return baseModelSort;
+	};
+	
+	ManagedObject.prototype._sort = function (data, fun) {
+	    var n = data.length;
+	    if (n < 2) {
+	        return data;
+	    };
+	    var i = 0;
+	    var j = i + 1;
+	    var logic, temp, key;
+	    for (; i < j; i++) {
+	        for (j = i + 1; j < n; j++) {
+	            logic = fun.call(this, data[i], data[j]);
+	            key = (typeof logic === 'number' ? logic : !!logic ? 1 : 0) > 0 ? true : false;
+	            if (key) {
+	                temp = data[i];
+	                data[i] = data[j];
+	                data[j] = temp;
+	            }
+	        }
+	    }
+	    return data;
+	};
+	
+	module.exports = ManagedObject;
 
 /***/ }
 ]);

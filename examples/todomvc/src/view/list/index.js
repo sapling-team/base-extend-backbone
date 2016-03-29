@@ -32,31 +32,31 @@ const IndexView = BaseView.extend({
         })
         console.log(create)
         var model = new ListModel();
-        model.setView(this)
-        model.setOnQueueKeys([
-            'render'
-        ])
+        console.log('model',model)
         model.execute(function(response){
-            console.log('$get items',this.$get('items'))
-            console.log('$get debug',this.$get('debug'))
-            console.log('$get trace.warn',this.$get('trace.warn'))
-            this.$set('trace.warn',{'msg':'msg'})
-            console.log('$get 全部的数据',this.$get())
-            var id1 = this.$filter('items',{"id":1})
+            console.log(this);
+            console.log(response);
+            console.log(this.manager)
+            console.log('$get items',this.manager.$get('items'))
+            console.log('$get debug',this.manager.$get('debug'))
+            console.log('$get trace.warn',this.manager.$get('trace.warn'))
+            this.manager.$set('trace.warn',{'msg':'msg'})
+            console.log('$get 全部的数据',this.manager.$get())
+            var id1 = this.manager.$filter('items',{"id":1})
             console.log('$filter id=1',id1)
-            var id2 = this.$filter('items',function(v,i){
+            var id2 = this.manager.$filter('items',function(v,i){
                 if(v.id == 2){
                     return true
                 }
             })
             console.log('$filter id=2',id2)
-            var icepy = this.$filter('items2','icepy')
+            var icepy = this.manager.$filter('items2','icepy')
             console.log('$filter icepy',icepy)
-            var sort1 = this.$sort('items','id.<')
+            var sort1 = this.manager.$sort('items','id.<')
             console.log('降序',sort1)
-            var sort2 = this.$sort('items','id.>')
+            var sort2 = this.manager.$sort('items','id.>')
             console.log('升序',sort2)
-            var sort3 = this.$sort('items',function(){
+            var sort3 = this.manager.$sort('items',function(){
                 return true
             });
         },function(){
