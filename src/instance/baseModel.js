@@ -20,7 +20,6 @@ var Store = require('../store/locationStore');
 var Config = require('config');
 var Tools = require('../util/tools');
 var warn = require('../util/warn');
-var ManagedObject = require('../entity/ManagedObject');
 var uid = 1314;
 var expiration = Store.expiration;
 var env = Config.env[Config.scheme];
