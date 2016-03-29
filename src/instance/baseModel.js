@@ -28,7 +28,6 @@ var BaseModel = Backbone.Model.extend({
 	options:{},
 	initialize:function(options){
 		this.parameter = null;
-		this.manager = new ManagedObject({entity:this.defaultEntity() || {}})
 		if (_.isFunction(this.beforeEmit)) {
 			this.beforeEmit(options);
 		};
@@ -187,7 +186,6 @@ var BaseModel = Backbone.Model.extend({
 				expiration.set(this.url,response,this.expiration);
 			};
 		};
-		this.manager.$update(response);
 		this.set(response);
 		return response;
 	},
