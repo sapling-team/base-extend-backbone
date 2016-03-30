@@ -12,3 +12,6 @@ addons:
 before_install:
     - npm install -g mocha
     - npm install
+branches:
+  only:
+    - master
