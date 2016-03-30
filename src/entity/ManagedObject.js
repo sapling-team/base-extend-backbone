@@ -8,6 +8,7 @@ var Tools = require('../util/tools');
 var baseModelSort = [];
 
 var ManagedObject = function(options){
+    options = options || {};
     this.entity = options.entity || {};
 };
 

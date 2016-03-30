@@ -60,12 +60,23 @@ var BaseView = Backbone.View.extend({
 		this.delegateEvents(this.events);
 	},
 	_ICEinitNode:function(){
+		var self = this;
 		this.$parent = this._ICEOptions.parent;
 		this.$children  = [];
 		this.$root = this.$parent ? this.$parent.$root : this;
-		if (this.$parent) {
+		if (this.$parent && this.$parent.__YYTPC__) {
 			this.$parent.$children.push(this);
 		};
+		this.on('hook:context',function(){
+			var args = tools.toArray(arguments);
+			if (self && self.__YYTPC__) {
+				if (_.isFunction(self.context)) {
+					self.context.apply(self,args);
+				}else{
+					warn('未定义context上下文钩子方法');
+				};
+			};
+		});
 	},
 	_ICEDestroy:function(){
 		//实例销毁之前
@@ -78,6 +89,21 @@ var BaseView = Backbone.View.extend({
 		if (_.isFunction(this.destroyed)) {
 			this.destroyed();
 		};
+	},
+	triggerParentHook:function(){
+		if (this.$parent && this.$parent.__YYTPC__) {
+			var args = tools.toArray(arguments);
+			var event = args[0];
+			if (_.isString(event)) {
+				event = 'hook:'+ event;
+				args[0] = event;
+			}else{
+				args.splice(0,0,'hook:context');
+			};
+			this.$parent.trigger.apply(this.$parent,args);
+		}else{
+			warn('在View实例对象初始化时未指明对象的结构关系');
+		}
 	},
 	/**
 	 * [compileHTML 编译模板]

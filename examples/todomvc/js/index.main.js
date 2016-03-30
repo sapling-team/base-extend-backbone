@@ -12,7 +12,7 @@ webpackJsonp([0,1],[
 	
 	_index2.default.start();
 	
-	__webpack_require__(19);
+	__webpack_require__(20);
 
 /***/ },
 /* 1 */
@@ -283,8 +283,13 @@ webpackJsonp([0,1],[
 	
 	var _create4 = _interopRequireDefault(_create3);
 	
+	var _ManagedObject = __webpack_require__(19);
+	
+	var _ManagedObject2 = _interopRequireDefault(_ManagedObject);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
+	var manager = new _ManagedObject2.default();
 	var IndexView = _BaseView2.default.extend({
 	    el: '#container',
 	    rawLoader: function rawLoader() {
@@ -299,43 +304,47 @@ webpackJsonp([0,1],[
 	        var state = {
 	            'default': 0
 	        };
+	
 	        var create = new _create2.default({
 	            methods: {},
 	            props: props,
 	            state: state,
 	            parent: this
 	        });
-	        this.on('render', function () {});
+	        console.log(this);
 	        console.log(create);
 	        var model = new _create4.default();
 	        console.log('model', model);
 	        model.execute(function (response) {
 	            console.log(this);
 	            console.log(response);
-	            console.log(this.manager);
-	            console.log('$get items', this.manager.$get('items'));
-	            console.log('$get debug', this.manager.$get('debug'));
-	            console.log('$get trace.warn', this.manager.$get('trace.warn'));
-	            this.manager.$set('trace.warn', { 'msg': 'msg' });
-	            console.log('$get 全部的数据', this.manager.$get());
-	            var id1 = this.manager.$filter('items', { "id": 1 });
+	            manager.$update(response);
+	            console.log('$get items', manager.$get('items'));
+	            console.log('$get debug', manager.$get('debug'));
+	            console.log('$get trace.warn', manager.$get('trace.warn'));
+	            manager.$set('trace.warn', { 'msg': 'msg' });
+	            console.log('$get 全部的数据', manager.$get());
+	            var id1 = manager.$filter('items', { "id": 1 });
 	            console.log('$filter id=1', id1);
-	            var id2 = this.manager.$filter('items', function (v, i) {
+	            var id2 = manager.$filter('items', function (v, i) {
 	                if (v.id == 2) {
 	                    return true;
 	                }
 	            });
 	            console.log('$filter id=2', id2);
-	            var icepy = this.manager.$filter('items2', 'icepy');
+	            var icepy = manager.$filter('items2', 'icepy');
 	            console.log('$filter icepy', icepy);
-	            var sort1 = this.manager.$sort('items', 'id.<');
+	            var sort1 = manager.$sort('items', 'id.<');
 	            console.log('降序', sort1);
-	            var sort2 = this.manager.$sort('items', 'id.>');
+	            var sort2 = manager.$sort('items', 'id.>');
 	            console.log('升序', sort2);
-	            var sort3 = this.manager.$sort('items', function () {
+	            var sort3 = manager.$sort('items', function () {
 	                return true;
 	            });
 	        }, function () {});
+	    },
+	    context: function context(args) {
+	        console.log('index parent', args);
 	    },
 	    router: {
 	        dealloc: true,
@@ -413,12 +422,23 @@ webpackJsonp([0,1],[
 			this.delegateEvents(this.events);
 		},
 		_ICEinitNode: function _ICEinitNode() {
+			var self = this;
 			this.$parent = this._ICEOptions.parent;
 			this.$children = [];
 			this.$root = this.$parent ? this.$parent.$root : this;
-			if (this.$parent) {
+			if (this.$parent && this.$parent.__YYTPC__) {
 				this.$parent.$children.push(this);
 			};
+			this.on('hook:context', function () {
+				var args = tools.toArray(arguments);
+				if (self && self.__YYTPC__) {
+					if (_.isFunction(self.context)) {
+						self.context.apply(self, args);
+					} else {
+						warn('未定义context上下文钩子方法');
+					};
+				};
+			});
 		},
 		_ICEDestroy: function _ICEDestroy() {
 			//实例销毁之前
@@ -431,6 +451,21 @@ webpackJsonp([0,1],[
 			if (_.isFunction(this.destroyed)) {
 				this.destroyed();
 			};
+		},
+		triggerParentHook: function triggerParentHook() {
+			if (this.$parent && this.$parent.__YYTPC__) {
+				var args = tools.toArray(arguments);
+				var event = args[0];
+				if (_.isString(event)) {
+					event = 'hook:' + event;
+					args[0] = event;
+				} else {
+					args.splice(0, 0, 'hook:context');
+				};
+				this.$parent.trigger.apply(this.$parent, args);
+			} else {
+				warn('在View实例对象初始化时未指明对象的结构关系');
+			}
 		},
 		/**
 	  * [compileHTML 编译模板]
@@ -786,6 +821,9 @@ webpackJsonp([0,1],[
 	var items = ['点击→播放专题页呈现，包括两侧挂幅前贴片', 'MV播放', '核心模块'];
 	var CreateView = _BaseView2.default.extend({
 	    el: '#list',
+	    events: {
+	        'click .am-list li': 'contextParent'
+	    },
 	    beforeMount: function beforeMount() {},
 	    afterMount: function afterMount() {
 	        this.listContainer = this.$el.find('.am-list');
@@ -802,6 +840,13 @@ webpackJsonp([0,1],[
 	    },
 	    beforeDestroy: function beforeDestroy() {
 	        this.listContainer = null; //谁引用谁释放
+	    },
+	    context: function context(args) {
+	        console.log(args);
+	    },
+	    contextParent: function contextParent(e) {
+	        console.log(e);
+	        this.triggerParentHook({ "d": 123 });
 	    }
 	});
 	
@@ -811,7 +856,7 @@ webpackJsonp([0,1],[
 /* 14 */
 /***/ function(module, exports) {
 
-	module.exports = "{{each items as item i}}\r\n    <li><a href=\"#\">{{item}}</a></li>\r\n{{/each}}\r\n"
+	module.exports = "{{each items as item i}}\r\n    <li><a>{{item}}</a></li>\r\n{{/each}}\r\n"
 
 /***/ },
 /* 15 */
@@ -884,7 +929,6 @@ webpackJsonp([0,1],[
 	var Config = __webpack_require__(5);
 	var Tools = __webpack_require__(11);
 	var warn = __webpack_require__(4);
-	var ManagedObject = __webpack_require__(21);
 	var uid = 1314;
 	var expiration = Store.expiration;
 	var env = Config.env[Config.scheme];
@@ -892,7 +936,6 @@ webpackJsonp([0,1],[
 		options: {},
 		initialize: function initialize(options) {
 			this.parameter = null;
-			this.manager = new ManagedObject({ entity: this.defaultEntity() || {} });
 			if (_.isFunction(this.beforeEmit)) {
 				this.beforeEmit(options);
 			};
@@ -1112,7 +1155,6 @@ webpackJsonp([0,1],[
 					expiration.set(this.url, response, this.expiration);
 				};
 			};
-			this.manager.$update(response);
 			this.set(response);
 			return response;
 		},
@@ -1522,13 +1564,6 @@ webpackJsonp([0,1],[
 
 /***/ },
 /* 19 */
-/***/ function(module, exports) {
-
-	// removed by extract-text-webpack-plugin
-
-/***/ },
-/* 20 */,
-/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1543,6 +1578,7 @@ webpackJsonp([0,1],[
 	var baseModelSort = [];
 	
 	var ManagedObject = function ManagedObject(options) {
+	    options = options || {};
 	    this.entity = options.entity || {};
 	};
 	
@@ -1738,6 +1774,12 @@ webpackJsonp([0,1],[
 	};
 	
 	module.exports = ManagedObject;
+
+/***/ },
+/* 20 */
+/***/ function(module, exports) {
+
+	// removed by extract-text-webpack-plugin
 
 /***/ }
 ]);

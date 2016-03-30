@@ -45,6 +45,7 @@ var config = {
             "BaseModel": path.resolve('../../src/instance/baseModel'),
             "BaseView": path.resolve('../../src/instance/baseView'),
             "BaseRouter": path.resolve('../../src/instance/baseRouter'),
+            "ManagedObject": path.resolve('../../src/entity/ManagedObject'),
             "store": path.resolve('../../src/store/locationStore'),
             "cookie": path.resolve('../../src/store/cookie'),
             "url": path.resolve('../../src/util/url'),

@@ -8,6 +8,9 @@ const items = [
 ]
 const CreateView = BaseView.extend({
     el:'#list',
+    events:{
+        'click .am-list li':'contextParent'
+    },
     beforeMount:function(){
 
     },
@@ -26,6 +29,13 @@ const CreateView = BaseView.extend({
     },
     beforeDestroy:function(){
         this.listContainer = null; //谁引用谁释放
+    },
+    context:function(args){
+        console.log(args);
+    },
+    contextParent:function(e){
+        console.log(e)
+        this.triggerParentHook({"d":123});
     }
 })
 
