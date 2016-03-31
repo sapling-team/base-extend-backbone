@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/sapling-team/base-extend-backbone.svg?branch=master)](https://travis-ci.org/sapling-team/base-extend-backbone)
 
-### How Install 
+### How Install
 
 i recommended useing `npm info` check `base-extend-backbone` version and useing `npm install base-extend-backbone`
 
@@ -13,6 +13,7 @@ var base = require('base-extend-backbone');
 var BaseModel = base.Model;
 var BaseView = base.View;
 var BaseRouter = base.Router;
+var ManagedObject = base.ManagedObject;
 ```
 
 ### How Use it
