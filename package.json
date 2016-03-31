@@ -3,10 +3,6 @@
   "version": "0.0.2",
   "description": "基于backbone的扩展",
   "main": "./src/index.js",
-  "directories": {
-    "example": "examples",
-    "test": "test"
-  },
   "scripts": {
     "test": "mocha --compilers js:babel-core/register --colors -w ./configs/mocha/**/*.test.js",
     "start": "browser-sync start --server --files examples/**/*.*",
