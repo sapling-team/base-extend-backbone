@@ -1,6 +1,6 @@
 ## base-extend-backbone
 
-![](https://travis-ci.org/sapling-team/base-extend-backbone.svg?branch=master)
+[![Build Status](https://travis-ci.org/sapling-team/base-extend-backbone.svg?branch=master)](https://travis-ci.org/sapling-team/base-extend-backbone)
 
 ### How Install 
 
