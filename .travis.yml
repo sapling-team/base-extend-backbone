@@ -1,8 +1,7 @@
 language:node_js
 sudo:false
 node_js:
- - '4.3.2'
- - '4.4.1'
+  - '4.4.1'
 cache:
   directories:
     - node_modules
@@ -12,4 +11,4 @@ branches:
 before_install:
     - npm install
 script:
- - npm test
+  - npm test
