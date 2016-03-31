@@ -7,7 +7,7 @@ cache:
     - node_modules
 before_install:
     - npm install -g mocha
-    - npm install
+script: mocha
 branches:
   only:
     - master
