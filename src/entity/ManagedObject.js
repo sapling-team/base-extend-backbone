@@ -3,7 +3,6 @@
  * @author icepy
  * @info 实体管理类
  */
-var warn = require('../util/warn');
 var Tools = require('../util/tools');
 var baseModelSort = [];
 
@@ -47,7 +46,6 @@ ManagedObject.prototype.$get = function(expression){
  */
 ManagedObject.prototype.$set = function(expression,value,options){
     if (expression === null || expression === undefined) {
-        warn('存储器不允许传递一个null或者undefined');
         return this;
     };
     if (Tools.isPlainObject(expression)) {
@@ -93,7 +91,7 @@ ManagedObject.prototype.$set = function(expression,value,options){
 ManagedObject.prototype.$filter = function(expression,value){
     var data = this.$get(expression);
     var result = [];
-    if (_.isArray(data)) {
+    if (Tools.isArray(data)) {
         var i = data.length;
         var n;
         while(i--){
@@ -133,7 +131,7 @@ ManagedObject.prototype.$sort = function(expression,value){
     // < 小于 false
     var data = this.$get(expression);
     baseModelSort.length = 0;
-    if (_.isArray(data)) {
+    if (Tools.isArray(data)) {
         switch(Tools.toType(value)){
             case '[object Function]':
                 baseModelSort = this._sort(data,value)

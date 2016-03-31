@@ -85,6 +85,22 @@
             return isNaN(number) ? value : number;
         }
     };
+
+    /**
+     * [isArray 判断是否为数组]
+     * @param  {*} value [description]
+     * @return {Boolean}       [description]
+     */
+    tools.isArray = function(obj){
+        return tools.toType(obj) === '[object Array]';
+    };
+
+    /**
+     * [mergeData 合并数据]
+     * @param  {obj} value [description]
+     * @param  {obj} value [description]
+     * @return {obj}       [description]
+     */
     tools.mergeData = function(to,from){
         var key,toVal,fromVal;
         for(key in from){

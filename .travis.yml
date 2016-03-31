@@ -5,9 +5,10 @@ node_js:
 cache:
   directories:
     - node_modules
-before_install:
-    - npm install -g mocha
-script: mocha
 branches:
   only:
     - master
+before_install:
+    - npm install
+script: 
+  - npm run test
