@@ -1,5 +1,5 @@
 language: node_js
-sudo: true 
+sudo: true
 node_js:
   - '4.1.1'
 cache:
@@ -9,3 +9,5 @@ before_install:
     - npm install
 script:
   - npm test
+  - npm run dev
+  - npm run build

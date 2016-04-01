@@ -6,7 +6,8 @@
   "scripts": {
     "test": "mocha --compilers js:babel-core/register --colors ./configs/mocha/**/*.test.js",
     "start": "browser-sync start --server --files examples/**/*.*",
-    "build": "webpack --colors --config webpack.config.js "
+    "build": "WEBPACK=BUILD webpack --colors --config ./configs/webpack/webpack.config.js ",
+    "dev": "WEBPACK=DEV webpack --colors --config ./configs/webpack/webpack.config.js"
   },
   "repository": {
     "type": "git",
