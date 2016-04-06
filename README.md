@@ -1,6 +1,7 @@
 ## base-extend-backbone
 
 [![Build Status](https://travis-ci.org/sapling-team/base-extend-backbone.svg?branch=master)](https://travis-ci.org/sapling-team/base-extend-backbone)
+[![Coverage Status](https://coveralls.io/repos/github/sapling-team/base-extend-backbone/badge.svg?branch=master)](https://coveralls.io/github/sapling-team/base-extend-backbone?branch=master)
 
 ### How Install
 
