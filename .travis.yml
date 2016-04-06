@@ -13,3 +13,5 @@ before_install:
     - npm install --verbose
 script:
   - npm run test
+notifications:
+  slack: yytspace:mAvt46hmfFsPbipu3auvoUH3
