@@ -8,7 +8,8 @@
         "start": "browser-sync start --server --files examples/**/*.*",
         "build": "WEBPACK=BUILD webpack --colors --config ./configs/webpack/webpack.config.js ",
         "dev": "WEBPACK=DEV webpack --colors --config ./configs/webpack/webpack.config.js",
-        "coverage": "cat ./coverage/lcov.info | coveralls"
+        "coverage": "cat ./coverage/lcov.info | coveralls",
+        "checkdir": "ls -a"
     },
     "repository": {
         "type": "git",

@@ -11,6 +11,7 @@ script:
   - npm test
   - npm run dev
   - npm run build
+  - npm run checkdir
 notifications:
   slack: yytspace:mAvt46hmfFsPbipu3auvoUH3
 after_script:
