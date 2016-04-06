@@ -1,8 +1,7 @@
-import chai from 'chai'
-import Manage from '../../src/entity/ManagedObject'
-
-const expect = chai.expect
-const testData = {
+var chai = require('chai');
+var Manage = require('../../src/entity/ManagedObject');
+var expect = chai.expect
+var testData = {
 	'items':[
 		{
 			'id':1,
@@ -24,7 +23,7 @@ const testData = {
 		'wen'
 	]
 }
-const sortTestData = [
+var sortTestData = [
 	{
 		'id':2,
 		'name':'developer'
@@ -38,7 +37,7 @@ const sortTestData = [
 		'name':'icepy'
 	}
 ]
-const testDataT = {
+var testDataT = {
 	'items':[
 		{
 			'id':1,
@@ -55,7 +54,7 @@ const testDataT = {
 	]
 }
 
-const sortTestDataT = [
+var sortTestDataT = [
 	{
 		'id':0,
 		'name':'0'
@@ -70,11 +69,11 @@ const sortTestDataT = [
 	}
 ]
 
-const manager = new Manage({
+var manager = new Manage({
 	entity:testData
 });
 
-const managerT = new Manage({
+var managerT = new Manage({
 	entity:testDataT
 })
 

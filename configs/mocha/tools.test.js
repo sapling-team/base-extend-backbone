@@ -1,17 +1,11 @@
-import chai from 'chai'
-import tools from '../../src/util/tools'
-
-const expect = chai.expect
-class Node{
-	constructor(name,attr){
-		this.name = name
-		this.attr = attr
-	}
-	print(){
-		console.log(this.name)
-	}
+var chai = require('chai');
+var tools = require('../../src/util/tools');
+var expect = chai.expect;
+var Node = function(name,attr){
+	this.name = name;
+	this.attr = attr;
 }
-const node = new Node()
+var node = new Node()
 describe('tools', function() {
 	describe('isPlainObject  判断任意一个值是否为普通对象', function() {
 		it('{"id":1}是一个对象', function() {
@@ -38,7 +32,7 @@ describe('tools', function() {
 	})
 
 	describe('toArray 类数组转化为数组', function() {
-		let toArrayTest = function(){
+		var toArrayTest = function(){
 			var arg = arguments
 			it('检查参数：1和2是否转化为真实数组', function() {
 				expect(tools.toArray(arg)).to.eql([1,2])
