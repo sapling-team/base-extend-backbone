@@ -24,9 +24,7 @@ var uid = 1314;
 var expiration = Store.expiration;
 var env = Config.env[Config.scheme];
 var BaseModel = Backbone.Model.extend({
-	options:{},
 	initialize:function(options){
-		this.parameter = null;
 		if (_.isFunction(this.beforeEmit)) {
 			this.beforeEmit(options);
 		};
@@ -43,64 +41,14 @@ var BaseModel = Backbone.Model.extend({
 			warn('你应该正确的配置{{url_prefix}}，在你的config.js文件中')
 		}
 	},
-	_ICEOptions:function(){
-		var self = this;
-		return {
-			beforeSend:function(xhr,model){
-				for(var setHeaderKey in self.headers){
-					xhr.setRequestHeader(setHeaderKey,self.headers[setHeaderKey]);
-				}
-			}
-		}
+	_ICEFetch:function(options){
+		this.fetch(options);
 	},
-	_ICEFetch:function(success,error){
-		var self = this;
-		var options = _.extend(this._ICEOptions(),this.options);
-		this.fetch(_.extend({
-			success:function(model,response) {
-				response = self._ICEProcessData(response);
-				if (_.isFunction(success)) {
-					success.call(self,response);
-				};
-			},
-			error:function(model,e){
-				if (_.isFunction(error)) {
-					error.call(self,e);
-				};
-			}
-		},options));
+	_ICESave:function(HTTPBody,options){
+		this.save(HTTPBody,options);
 	},
-	_ICESave:function(HTTPBody,success,error){
-		var self = this;
-		var options = _.extend(this._ICEOptions(),this.options);
-		this.save(HTTPBody,_.extend({
-			success:function(model,response){
-				response = self._ICEProcessData(response);
-				if (_.isFunction(success)) {
-					success.call(self,response);
-				}
-			},
-			error:function(model,e){
-				if (_.isFunction(error)) {
-					error.call(self,e);
-				};
-			}
-		},options));
-	},
-	_ICEDestroy:function(success,error){
-		var self = this;
-		this.destroy({
-			success:function(model,response){
-				if (_.isFunction(success)) {
-					success.call(self,response);
-				};
-			},
-			error:function(model,e){
-				if (_.isFunction(error)) {
-					error.call(self,e);
-				};
-			}
-		});
+	_ICEDestroy:function(options){
+		this.destroy(options);
 	},
 	_ICEJSONP:function(parameter,success,error){
 		var self = this;
@@ -123,31 +71,49 @@ var BaseModel = Backbone.Model.extend({
 		});
 	},
 	_ICESendHelper:function(message){
-		var success = message.success;
-		var error = message.error;
+		var self = this;
 		if (message.url) {
 			//如果存在url，将this的url替换
 			this.url = message.url;
 		};
+		var options = {};
+		if (message.type !== 'JSONP') {
+			options.beforeSend = function(xhr,setting){
+				for(var key in this.headers){
+					xhr.setRequestHeader(key,this.headers[key]);
+				}
+			};
+			options.success = function(model,response,afterSetting){
+				response = self._ICEProcessData(response);
+				if (_.isFunction(message.success)) {
+					message.success.call(self,response,afterSetting.xhr);
+				};
+			}
+			options.error = function(model,xhr){
+				if (_.isFunction(message.error)) {
+					message.error.call(self,xhr);
+				};
+			}
+		}
 		switch(message.type){
 			case 'POST':
-				this._ICESave(message.HTTPBody,success,error);
+				this._ICESave(message.HTTPBody,options);
 				break;
 			case 'PUT':
 				var id = message.HTTPBody.id;
 				if(!id && id !== 0){
 					message.HTTPBody.id = 'icepy'+(uid++);
 				};
-				this._ICESave(message.HTTPBody,success,error);
+				this._ICESave(message.HTTPBody,options);
 				break;
 			case 'DELETE':
-				this._ICEDestroy(success,error);
+				this._ICEDestroy(options);
 				break;
 			case 'JSONP':
-				this._ICEJSONP(message.parameter,success,error);
+				this._ICEJSONP(message.parameter,message.success,message.error);
 				break;
 			default:
-				this._ICEFetch(success,error);
+				this._ICEFetch(options);
 				break;
 		}
 	},
@@ -290,7 +256,7 @@ var BaseModel = Backbone.Model.extend({
 	setChangeURL:function(parameter){
 		var url = ''
 		if (!parameter) {
-			return;
+			return this.url;
 		};
 		for(var key in parameter){
 			var value = parameter[key];
@@ -304,11 +270,25 @@ var BaseModel = Backbone.Model.extend({
 	},
 	/**
 	 * [setHeaders 设置XHR 头信息]
-	 * @param {[type]} headers [description]
+	 * @param {[string|object]} headers [description]
 	 */
-	setHeaders:function(headers){
-		this.headers = null;
-		this.headers = headers;
+	setHeaders:function(){
+		if (!this.headers) {
+			this.headers = {};
+		};
+		var args = Tools.toArray(arguments);
+		if (args.length === 1) {
+			var headers = args[0];
+			for(var key in headers){
+				this.headers[key] = headers[key];
+			}
+		}else{
+			if (args.length) {
+				var key = args[0];
+				var value = args[1];
+				this.headers[key] = value;
+			}
+		}
 	},
 	/**
 	 * [setUpdateStore 将实体数据更新到本地缓存]

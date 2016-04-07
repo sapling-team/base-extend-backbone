@@ -19,6 +19,9 @@ const CreateView = BaseView.extend({
     },
     ready:function(){
         this.initRender()
+        this.on('github',function(args){
+            console.log('children',args);
+        })
     },
     initRender:function(){
         var html = this.compileHTML(cilpTemp,{'items':items})
@@ -35,7 +38,8 @@ const CreateView = BaseView.extend({
     },
     contextParent:function(e){
         console.log(e)
-        this.triggerParentHook({"d":123});
+        this.triggerContextHook('root',{"d":123});
+        // this.dispatch('github',{'qwe':456});
     }
 })
 

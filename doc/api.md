@@ -48,8 +48,6 @@ model.execute(function(response,model){
 
 - beforeEmit：在初始化之后调用
 - formatter：在请求成功之后，可以对数据进行格式化，需要返回一个新的数据
-- defaultEntity：在初始化时调用
-
 
 ```JavaScript
 var Model = BaseModel.extend({
@@ -164,7 +162,7 @@ model.execute(function(response){
 *helper*
 
 - setChangeURL：辅助拼接URL，传入一个key/value普通对象
-- setHeaders：辅助设置XHR头，传入一个key/value普通对象（JSONP时不可用）
+- setHeaders：辅助设置XHR头，传入一个key/value普通对象或者传入两个字符串key value（JSONP时不可用）
 - setUpdateStore：将实体数据更新到本地缓存
 
 ### ManagedObject
@@ -250,12 +248,17 @@ var sort3 = this.$sort('items',function(){
 - afterMount：在模板载入到真实dom之后调用
 - ready：base.View内部初始化完成之后调用
 
+*Context Hook*
+
+- context：上下文钩子函数，可以通过`triggerContextHook`来反向通信
+
 *实例方法*
 
 - compileHTML：编译模板
 - broadcast：触发所有子View实例对象注册的事件
 - dispatch：触发所有父View实例对象注册的事件
 - destroy：销毁当前实例对象（删除DOM，卸载事件监听等）
+- triggerContextHook：触发父实例对象或者root实例对象的上下文钩子事件
 
 *实例属性*
 

@@ -13,13 +13,12 @@
 var Backbone = require('backbone');
 var tplEng = require('tplEng');
 var warn = require('../util/warn');
-var tools = require('../util/tools');
-var error = require('../util/debug').error;
+var Tools = require('../util/tools');
+var error = require('../util/error');
 var BaseView = Backbone.View.extend({
 	initialize:function(options){
 		//初始化参数
 		this._ICEOptions = options || {};
-
 		if (_.isFunction(this.beforeMount)){
 			this.beforeMount();
 		}else{
@@ -68,7 +67,7 @@ var BaseView = Backbone.View.extend({
 			this.$parent.$children.push(this);
 		};
 		this.on('hook:context',function(){
-			var args = tools.toArray(arguments);
+			var args = Tools.toArray(arguments);
 			if (self && self.__YYTPC__) {
 				if (_.isFunction(self.context)) {
 					self.context.apply(self,args);
@@ -90,20 +89,38 @@ var BaseView = Backbone.View.extend({
 			this.destroyed();
 		};
 	},
-	triggerParentHook:function(){
+	/**
+	 * [triggerHook 触发父对象的Hook]
+	 * @return {[type]} [description]
+	 */
+	triggerContextHook:function(){
 		if (this.$parent && this.$parent.__YYTPC__) {
-			var args = tools.toArray(arguments);
+			var args = Tools.toArray(arguments);
 			var event = args[0];
 			if (_.isString(event)) {
-				event = 'hook:'+ event;
-				args[0] = event;
+				args[0] = 'hook:context';
 			}else{
 				args.splice(0,0,'hook:context');
 			};
-			this.$parent.trigger.apply(this.$parent,args);
+			switch (event) {
+				case 'root':
+						this.$root.trigger.apply(this.$root,args);
+					break;
+				default:
+						this.$parent.trigger.apply(this.$parent,args);
+					break;
+			}
 		}else{
 			warn('在View实例对象初始化时未指明对象的结构关系');
 		}
+	},
+	/**
+	 * [findDOMNode 查找DOM节点]
+	 * @param  {[type]} exprs [description]
+	 * @return {[type]}       [description]
+	 */
+	findDOMNode:function(exprs){
+		return this.$el && this.$el.find(exprs);
 	},
 	/**
 	 * [compileHTML 编译模板]
@@ -119,8 +136,8 @@ var BaseView = Backbone.View.extend({
 	 * @param  {[type]} event [description]
 	 * @return {[type]}       [description]
 	 */
-	broadcast:function(event){
-		var args = tools.toArray(arguments);
+	broadcast:function(){
+		var args = Tools.toArray(arguments);
 		var children = this.$children;
 		var i = 0;
 		var j = children.length;
@@ -138,8 +155,8 @@ var BaseView = Backbone.View.extend({
 	 * @param  {[type]} event [description]
 	 * @return {[type]}       [description]
 	 */
-	dispatch:function(event){
-		var args = tools.toArray(arguments);
+	dispatch:function(){
+		var args = Tools.toArray(arguments);
 		var parent = this.$parent;
 		while(parent){
 			parent.trigger.apply(parent,args);

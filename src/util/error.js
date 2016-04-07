@@ -1,14 +1,14 @@
 /**
  * @time 2012年10月26日
  * @author icepy
- * @info 完成warn包装
+ * @info 完成error包装
  */
 
 'use strict';
 
 var log = require('./log');
 
-var warn = function(msg,e){
-	log.warn(msg,e);
+var error = function(msg,e){
+	log.error(msg,e);
 }
-module.exports = warn;
+module.exports = error;

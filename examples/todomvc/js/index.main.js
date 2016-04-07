@@ -12,7 +12,7 @@ webpackJsonp([0,1],[
 	
 	_index2.default.start();
 	
-	__webpack_require__(20);
+	__webpack_require__(22);
 
 /***/ },
 /* 1 */
@@ -187,45 +187,18 @@ webpackJsonp([0,1],[
 	
 	'use strict';
 	
-	var Config = __webpack_require__(5);
-	var Debug = __webpack_require__(6);
+	var log = __webpack_require__(5);
 	
 	var warn = function warn(msg, e) {
-	  if (Config.debug) {
-	    Debug.warn(msg, e);
-	  }
+	  log.warn(msg, e);
 	};
 	module.exports = warn;
 
 /***/ },
 /* 5 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
-	'use strict';
-	
-	var CONFIG = {
-		scheme: 'alpha',
-		env: {
-			alpha: {
-				'url_prefix': 'http://127.0.0.1:3000'
-				// 'url_prefix':'http://icepy.yinyuetai.com:4000'
-			},
-			beta: {
-				'url_prefix': 'http://beta.com'
-			},
-			release: {
-				'url_prefix': ''
-			}
-		},
-		debug: true
-	};
-	module.exports = CONFIG;
-
-/***/ },
-/* 6 */
-/***/ function(module, exports) {
-
-	/**
+	/* WEBPACK VAR INJECTION */(function(process) {/**
 	 * @time 2012年10月26日
 	 * @author icepy
 	 * @info debug信息打印
@@ -235,25 +208,140 @@ webpackJsonp([0,1],[
 	
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
 	
-	var debug = {};
-	debug.warn = function (msg, e) {
+	var log = {
+		warn: function warn() {},
+		error: function error() {}
+	};
+	if (process.env.NODE_ENV !== 'product') {
 		var hasConsole = (typeof console === 'undefined' ? 'undefined' : _typeof(console)) !== undefined;
-		if (hasConsole) {
-			console.warn('[YYT PC Warning]:' + msg);
-			if (e) {
-				throw e;
-			} else {
-				var warning = new Error('Warning Stack Trace');
-				console.warn(warning.stack);
+		log.warn = function (msg, e) {
+			if (hasConsole) {
+				console.warn('[YYT PC Warning]:' + msg);
+				if (e) {
+					throw e;
+				} else {
+					var warning = new Error('Warning Stack Trace');
+					console.warn(warning.stack);
+				}
+			};
+		};
+		log.error = function (msg) {
+			var error = new Error(msg);
+			throw error.stack;
+		};
+		log.info = function (msg) {
+			if (hasConsole) {
+				console.info('[YYT PC INFO]' + msg);
 			}
 		};
-		return hasConsole;
+		log.dir = function (tag) {
+			var arr = document.querySelectorAll(tag);
+			if (arr && arr.length) {
+				arr.forEach(function (element) {
+					console.dir(element);
+				});
+			}
+		};
+	}
+	module.exports = log;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)))
+
+/***/ },
+/* 6 */
+/***/ function(module, exports) {
+
+	// shim for using process in browser
+	
+	var process = module.exports = {};
+	var queue = [];
+	var draining = false;
+	var currentQueue;
+	var queueIndex = -1;
+	
+	function cleanUpNextTick() {
+	    draining = false;
+	    if (currentQueue.length) {
+	        queue = currentQueue.concat(queue);
+	    } else {
+	        queueIndex = -1;
+	    }
+	    if (queue.length) {
+	        drainQueue();
+	    }
+	}
+	
+	function drainQueue() {
+	    if (draining) {
+	        return;
+	    }
+	    var timeout = setTimeout(cleanUpNextTick);
+	    draining = true;
+	
+	    var len = queue.length;
+	    while(len) {
+	        currentQueue = queue;
+	        queue = [];
+	        while (++queueIndex < len) {
+	            if (currentQueue) {
+	                currentQueue[queueIndex].run();
+	            }
+	        }
+	        queueIndex = -1;
+	        len = queue.length;
+	    }
+	    currentQueue = null;
+	    draining = false;
+	    clearTimeout(timeout);
+	}
+	
+	process.nextTick = function (fun) {
+	    var args = new Array(arguments.length - 1);
+	    if (arguments.length > 1) {
+	        for (var i = 1; i < arguments.length; i++) {
+	            args[i - 1] = arguments[i];
+	        }
+	    }
+	    queue.push(new Item(fun, args));
+	    if (queue.length === 1 && !draining) {
+	        setTimeout(drainQueue, 0);
+	    }
 	};
-	debug.error = function (msg) {
-		var error = new Error(msg);
-		throw error.stack;
+	
+	// v8 likes predictible objects
+	function Item(fun, array) {
+	    this.fun = fun;
+	    this.array = array;
+	}
+	Item.prototype.run = function () {
+	    this.fun.apply(null, this.array);
 	};
-	module.exports = debug;
+	process.title = 'browser';
+	process.browser = true;
+	process.env = {};
+	process.argv = [];
+	process.version = ''; // empty string to avoid regexp issues
+	process.versions = {};
+	
+	function noop() {}
+	
+	process.on = noop;
+	process.addListener = noop;
+	process.once = noop;
+	process.off = noop;
+	process.removeListener = noop;
+	process.removeAllListeners = noop;
+	process.emit = noop;
+	
+	process.binding = function (name) {
+	    throw new Error('process.binding is not supported');
+	};
+	
+	process.cwd = function () { return '/' };
+	process.chdir = function (dir) {
+	    throw new Error('process.chdir is not supported');
+	};
+	process.umask = function() { return 0; };
+
 
 /***/ },
 /* 7 */
@@ -271,19 +359,19 @@ webpackJsonp([0,1],[
 	
 	var _BaseView2 = _interopRequireDefault(_BaseView);
 	
-	var _create = __webpack_require__(13);
+	var _create = __webpack_require__(14);
 	
 	var _create2 = _interopRequireDefault(_create);
 	
-	var _index = __webpack_require__(15);
+	var _index = __webpack_require__(16);
 	
 	var _index2 = _interopRequireDefault(_index);
 	
-	var _create3 = __webpack_require__(16);
+	var _create3 = __webpack_require__(17);
 	
 	var _create4 = _interopRequireDefault(_create3);
 	
-	var _ManagedObject = __webpack_require__(19);
+	var _ManagedObject = __webpack_require__(21);
 	
 	var _ManagedObject2 = _interopRequireDefault(_ManagedObject);
 	
@@ -311,36 +399,36 @@ webpackJsonp([0,1],[
 	            state: state,
 	            parent: this
 	        });
-	        console.log(this);
-	        console.log(create);
 	        var model = new _create4.default();
-	        console.log('model', model);
+	        model.setChangeURL({
+	            id: '123'
+	        });
 	        model.execute(function (response) {
-	            console.log(this);
-	            console.log(response);
-	            manager.$update(response);
-	            console.log('$get items', manager.$get('items'));
-	            console.log('$get debug', manager.$get('debug'));
-	            console.log('$get trace.warn', manager.$get('trace.warn'));
-	            manager.$set('trace.warn', { 'msg': 'msg' });
-	            console.log('$get 全部的数据', manager.$get());
-	            var id1 = manager.$filter('items', { "id": 1 });
-	            console.log('$filter id=1', id1);
-	            var id2 = manager.$filter('items', function (v, i) {
-	                if (v.id == 2) {
-	                    return true;
-	                }
-	            });
-	            console.log('$filter id=2', id2);
-	            var icepy = manager.$filter('items2', 'icepy');
-	            console.log('$filter icepy', icepy);
-	            var sort1 = manager.$sort('items', 'id.<');
-	            console.log('降序', sort1);
-	            var sort2 = manager.$sort('items', 'id.>');
-	            console.log('升序', sort2);
-	            var sort3 = manager.$sort('items', function () {
-	                return true;
-	            });
+	            // console.log(this);
+	            // console.log(response);
+	            // manager.$update(response);
+	            // console.log('$get items',manager.$get('items'))
+	            // console.log('$get debug',manager.$get('debug'))
+	            // console.log('$get trace.warn',manager.$get('trace.warn'))
+	            // manager.$set('trace.warn',{'msg':'msg'})
+	            // console.log('$get 全部的数据',manager.$get())
+	            // var id1 = manager.$filter('items',{"id":1})
+	            // console.log('$filter id=1',id1)
+	            // var id2 = manager.$filter('items',function(v,i){
+	            //     if(v.id == 2){
+	            //         return true
+	            //     }
+	            // })
+	            // console.log('$filter id=2',id2)
+	            // var icepy = manager.$filter('items2','icepy')
+	            // console.log('$filter icepy',icepy)
+	            // var sort1 = manager.$sort('items','id.<')
+	            // console.log('降序',sort1)
+	            // var sort2 = manager.$sort('items','id.>')
+	            // console.log('升序',sort2)
+	            // var sort3 = manager.$sort('items',function(){
+	            //     return true
+	            // });
 	        }, function () {});
 	    },
 	    context: function context(args) {
@@ -375,13 +463,12 @@ webpackJsonp([0,1],[
 	var Backbone = __webpack_require__(3);
 	var tplEng = __webpack_require__(10);
 	var warn = __webpack_require__(4);
-	var tools = __webpack_require__(11);
-	var error = __webpack_require__(6).error;
+	var Tools = __webpack_require__(11);
+	var error = __webpack_require__(13);
 	var BaseView = Backbone.View.extend({
 		initialize: function initialize(options) {
 			//初始化参数
 			this._ICEOptions = options || {};
-	
 			if (_.isFunction(this.beforeMount)) {
 				this.beforeMount();
 			} else {
@@ -430,7 +517,7 @@ webpackJsonp([0,1],[
 				this.$parent.$children.push(this);
 			};
 			this.on('hook:context', function () {
-				var args = tools.toArray(arguments);
+				var args = Tools.toArray(arguments);
 				if (self && self.__YYTPC__) {
 					if (_.isFunction(self.context)) {
 						self.context.apply(self, args);
@@ -452,20 +539,38 @@ webpackJsonp([0,1],[
 				this.destroyed();
 			};
 		},
-		triggerParentHook: function triggerParentHook() {
+		/**
+	  * [triggerHook 触发父对象的Hook]
+	  * @return {[type]} [description]
+	  */
+		triggerContextHook: function triggerContextHook() {
 			if (this.$parent && this.$parent.__YYTPC__) {
-				var args = tools.toArray(arguments);
+				var args = Tools.toArray(arguments);
 				var event = args[0];
 				if (_.isString(event)) {
-					event = 'hook:' + event;
-					args[0] = event;
+					args[0] = 'hook:context';
 				} else {
 					args.splice(0, 0, 'hook:context');
 				};
-				this.$parent.trigger.apply(this.$parent, args);
+				switch (event) {
+					case 'root':
+						this.$root.trigger.apply(this.$root, args);
+						break;
+					default:
+						this.$parent.trigger.apply(this.$parent, args);
+						break;
+				}
 			} else {
 				warn('在View实例对象初始化时未指明对象的结构关系');
 			}
+		},
+		/**
+	  * [findDOMNode 查找DOM节点]
+	  * @param  {[type]} exprs [description]
+	  * @return {[type]}       [description]
+	  */
+		findDOMNode: function findDOMNode(exprs) {
+			return this.$el && this.$el.find(exprs);
 		},
 		/**
 	  * [compileHTML 编译模板]
@@ -481,8 +586,8 @@ webpackJsonp([0,1],[
 	  * @param  {[type]} event [description]
 	  * @return {[type]}       [description]
 	  */
-		broadcast: function broadcast(event) {
-			var args = tools.toArray(arguments);
+		broadcast: function broadcast() {
+			var args = Tools.toArray(arguments);
 			var children = this.$children;
 			var i = 0;
 			var j = children.length;
@@ -500,8 +605,8 @@ webpackJsonp([0,1],[
 	  * @param  {[type]} event [description]
 	  * @return {[type]}       [description]
 	  */
-		dispatch: function dispatch(event) {
-			var args = tools.toArray(arguments);
+		dispatch: function dispatch() {
+			var args = Tools.toArray(arguments);
 			var parent = this.$parent;
 			while (parent) {
 				parent.trigger.apply(parent, args);
@@ -771,6 +876,22 @@ webpackJsonp([0,1],[
 	            return isNaN(number) ? value : number;
 	        }
 	    };
+	
+	    /**
+	     * [isArray 判断是否为数组]
+	     * @param  {*} value [description]
+	     * @return {Boolean}       [description]
+	     */
+	    tools.isArray = function (obj) {
+	        return tools.toType(obj) === '[object Array]';
+	    };
+	
+	    /**
+	     * [mergeData 合并数据]
+	     * @param  {obj} value [description]
+	     * @param  {obj} value [description]
+	     * @return {obj}       [description]
+	     */
 	    tools.mergeData = function (to, from) {
 	        var key, toVal, fromVal;
 	        for (key in from) {
@@ -806,13 +927,32 @@ webpackJsonp([0,1],[
 /* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
+	/**
+	 * @time 2012年10月26日
+	 * @author icepy
+	 * @info 完成error包装
+	 */
+	
+	'use strict';
+	
+	var log = __webpack_require__(5);
+	
+	var error = function error(msg, e) {
+	  log.error(msg, e);
+	};
+	module.exports = error;
+
+/***/ },
+/* 14 */
+/***/ function(module, exports, __webpack_require__) {
+
 	'use strict';
 	
 	var _BaseView = __webpack_require__(9);
 	
 	var _BaseView2 = _interopRequireDefault(_BaseView);
 	
-	var _create = __webpack_require__(14);
+	var _create = __webpack_require__(15);
 	
 	var _create2 = _interopRequireDefault(_create);
 	
@@ -830,6 +970,9 @@ webpackJsonp([0,1],[
 	    },
 	    ready: function ready() {
 	        this.initRender();
+	        this.on('github', function (args) {
+	            console.log('children', args);
+	        });
 	    },
 	    initRender: function initRender() {
 	        var html = this.compileHTML(_create2.default, { 'items': items });
@@ -846,26 +989,27 @@ webpackJsonp([0,1],[
 	    },
 	    contextParent: function contextParent(e) {
 	        console.log(e);
-	        this.triggerParentHook({ "d": 123 });
+	        this.triggerContextHook('root', { "d": 123 });
+	        // this.dispatch('github',{'qwe':456});
 	    }
 	});
 	
 	module.exports = CreateView;
 
 /***/ },
-/* 14 */
+/* 15 */
 /***/ function(module, exports) {
 
 	module.exports = "{{each items as item i}}\r\n    <li><a>{{item}}</a></li>\r\n{{/each}}\r\n"
 
 /***/ },
-/* 15 */
+/* 16 */
 /***/ function(module, exports) {
 
 	module.exports = "<div id=\"indexId\" class=\"am-container\">\r\n    <header class=\"header\">\r\n        <span class=\"title\">@icepy Test Todo App</span>\r\n    </header>\r\n    <div id=\"list\" class=\"content\">\r\n        <ul class=\"am-list\">\r\n\r\n        </ul>\r\n    </div>\r\n    <footer class=\"footer\">\r\n        <span class=\"title\">@YYT PC Demo</span>\r\n    </footer>\r\n</div>\r\n"
 
 /***/ },
-/* 16 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -876,23 +1020,30 @@ webpackJsonp([0,1],[
 	
 	'use strict';
 	
-	var BaseModel = __webpack_require__(17);
+	var BaseModel = __webpack_require__(18);
 	
 	var Model = BaseModel.extend({
 		url: '{{url_prefix}}/examples/todomvc/mock/default.json?id={{id}}', //填写请求地址
+		headers: {
+			'Warning': '123'
+		},
+		defaults: function defaults() {
+			return {
+				'github': '123'
+			};
+		},
 		beforeEmit: function beforeEmit(options) {
 			// 如果需要开启对请求数据的本地缓存，可将下列两行注释去掉
 			// this.storageCache = true; //开启本地缓存
 			// this.expiration = 2; //设置缓存过期时间（1表示60*60*1000 一小时）
 		},
-		defaultEntity: function defaultEntity() {
-			return {
-				"default": 1
-			};
+		validate: function validate(attrs) {
+			console.log(attrs);
+		},
+		formatter: function formatter(response) {
+			//formatter方法可以格式化数据
+			return response;
 		}
-		// formatter:function(response){
-		//		//formatter方法可以格式化数据
-		// }
 	});
 	var shared = null;
 	Model.sharedInstanceModel = function () {
@@ -904,7 +1055,7 @@ webpackJsonp([0,1],[
 	module.exports = Model;
 
 /***/ },
-/* 17 */
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -925,17 +1076,15 @@ webpackJsonp([0,1],[
 	'use strict';
 	
 	var Backbone = __webpack_require__(3);
-	var Store = __webpack_require__(18);
-	var Config = __webpack_require__(5);
+	var Store = __webpack_require__(19);
+	var Config = __webpack_require__(20);
 	var Tools = __webpack_require__(11);
 	var warn = __webpack_require__(4);
 	var uid = 1314;
 	var expiration = Store.expiration;
 	var env = Config.env[Config.scheme];
 	var BaseModel = Backbone.Model.extend({
-		options: {},
 		initialize: function initialize(options) {
-			this.parameter = null;
 			if (_.isFunction(this.beforeEmit)) {
 				this.beforeEmit(options);
 			};
@@ -953,124 +1102,14 @@ webpackJsonp([0,1],[
 				warn('你应该正确的配置{{url_prefix}}，在你的config.js文件中');
 			}
 		},
-		_ICEOptions: function _ICEOptions() {
-			var self = this;
-			return {
-				beforeSend: function beforeSend(xhr, model) {
-					for (var setHeaderKey in self.headers) {
-						xhr.setRequestHeader(setHeaderKey, self.headers[setHeaderKey]);
-					}
-				}
-			};
+		_ICEFetch: function _ICEFetch(options) {
+			this.fetch(options);
 		},
-		_ICEFetch: function _ICEFetch(success, error) {
-			var self = this;
-			var options = _.extend(this._ICEOptions(), this.options);
-			this.fetch(_.extend({
-				success: function (_success) {
-					function success(_x, _x2) {
-						return _success.apply(this, arguments);
-					}
-	
-					success.toString = function () {
-						return _success.toString();
-					};
-	
-					return success;
-				}(function (model, response) {
-					response = self._ICEProcessData(response);
-					if (_.isFunction(success)) {
-						success.call(self, response);
-					};
-				}),
-				error: function (_error) {
-					function error(_x3, _x4) {
-						return _error.apply(this, arguments);
-					}
-	
-					error.toString = function () {
-						return _error.toString();
-					};
-	
-					return error;
-				}(function (model, e) {
-					if (_.isFunction(error)) {
-						error.call(self, e);
-					};
-				})
-			}, options));
+		_ICESave: function _ICESave(HTTPBody, options) {
+			this.save(HTTPBody, options);
 		},
-		_ICESave: function _ICESave(HTTPBody, success, error) {
-			var self = this;
-			var options = _.extend(this._ICEOptions(), this.options);
-			this.save(HTTPBody, _.extend({
-				success: function (_success2) {
-					function success(_x5, _x6) {
-						return _success2.apply(this, arguments);
-					}
-	
-					success.toString = function () {
-						return _success2.toString();
-					};
-	
-					return success;
-				}(function (model, response) {
-					response = self._ICEProcessData(response);
-					if (_.isFunction(success)) {
-						success.call(self, response);
-					}
-				}),
-				error: function (_error2) {
-					function error(_x7, _x8) {
-						return _error2.apply(this, arguments);
-					}
-	
-					error.toString = function () {
-						return _error2.toString();
-					};
-	
-					return error;
-				}(function (model, e) {
-					if (_.isFunction(error)) {
-						error.call(self, e);
-					};
-				})
-			}, options));
-		},
-		_ICEDestroy: function _ICEDestroy(success, error) {
-			var self = this;
-			this.destroy({
-				success: function (_success3) {
-					function success(_x9, _x10) {
-						return _success3.apply(this, arguments);
-					}
-	
-					success.toString = function () {
-						return _success3.toString();
-					};
-	
-					return success;
-				}(function (model, response) {
-					if (_.isFunction(success)) {
-						success.call(self, response);
-					};
-				}),
-				error: function (_error3) {
-					function error(_x11, _x12) {
-						return _error3.apply(this, arguments);
-					}
-	
-					error.toString = function () {
-						return _error3.toString();
-					};
-	
-					return error;
-				}(function (model, e) {
-					if (_.isFunction(error)) {
-						error.call(self, e);
-					};
-				})
-			});
+		_ICEDestroy: function _ICEDestroy(options) {
+			this.destroy(options);
 		},
 		_ICEJSONP: function _ICEJSONP(parameter, success, error) {
 			var self = this;
@@ -1093,31 +1132,49 @@ webpackJsonp([0,1],[
 			});
 		},
 		_ICESendHelper: function _ICESendHelper(message) {
-			var success = message.success;
-			var error = message.error;
+			var self = this;
 			if (message.url) {
 				//如果存在url，将this的url替换
 				this.url = message.url;
 			};
+			var options = {};
+			if (message.type !== 'JSONP') {
+				options.beforeSend = function (xhr, setting) {
+					for (var key in this.headers) {
+						xhr.setRequestHeader(key, this.headers[key]);
+					}
+				};
+				options.success = function (model, response, afterSetting) {
+					response = self._ICEProcessData(response);
+					if (_.isFunction(message.success)) {
+						message.success.call(self, response, afterSetting.xhr);
+					};
+				};
+				options.error = function (model, xhr) {
+					if (_.isFunction(message.error)) {
+						message.error.call(self, xhr);
+					};
+				};
+			}
 			switch (message.type) {
 				case 'POST':
-					this._ICESave(message.HTTPBody, success, error);
+					this._ICESave(message.HTTPBody, options);
 					break;
 				case 'PUT':
 					var id = message.HTTPBody.id;
 					if (!id && id !== 0) {
 						message.HTTPBody.id = 'icepy' + uid++;
 					};
-					this._ICESave(message.HTTPBody, success, error);
+					this._ICESave(message.HTTPBody, options);
 					break;
 				case 'DELETE':
-					this._ICEDestroy(success, error);
+					this._ICEDestroy(options);
 					break;
 				case 'JSONP':
-					this._ICEJSONP(message.parameter, success, error);
+					this._ICEJSONP(message.parameter, message.success, message.error);
 					break;
 				default:
-					this._ICEFetch(success, error);
+					this._ICEFetch(options);
 					break;
 			}
 		},
@@ -1260,7 +1317,7 @@ webpackJsonp([0,1],[
 		setChangeURL: function setChangeURL(parameter) {
 			var url = '';
 			if (!parameter) {
-				return;
+				return this.url;
 			};
 			for (var key in parameter) {
 				var value = parameter[key];
@@ -1274,11 +1331,25 @@ webpackJsonp([0,1],[
 		},
 		/**
 	  * [setHeaders 设置XHR 头信息]
-	  * @param {[type]} headers [description]
+	  * @param {[string|object]} headers [description]
 	  */
-		setHeaders: function setHeaders(headers) {
-			this.headers = null;
-			this.headers = headers;
+		setHeaders: function setHeaders() {
+			if (!this.headers) {
+				this.headers = {};
+			};
+			var args = Tools.toArray(arguments);
+			if (args.length === 1) {
+				var headers = args[0];
+				for (var key in headers) {
+					this.headers[key] = headers[key];
+				}
+			} else {
+				if (args.length) {
+					var key = args[0];
+					var value = args[1];
+					this.headers[key] = value;
+				}
+			}
 		},
 		/**
 	  * [setUpdateStore 将实体数据更新到本地缓存]
@@ -1293,7 +1364,7 @@ webpackJsonp([0,1],[
 	module.exports = BaseModel;
 
 /***/ },
-/* 18 */
+/* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global, module) {/**
@@ -1563,7 +1634,31 @@ webpackJsonp([0,1],[
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(12)(module)))
 
 /***/ },
-/* 19 */
+/* 20 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	var CONFIG = {
+		scheme: 'alpha',
+		env: {
+			alpha: {
+				'url_prefix': 'http://127.0.0.1:3000'
+				// 'url_prefix':'http://icepy.yinyuetai.com:4000'
+			},
+			beta: {
+				'url_prefix': 'http://beta.com'
+			},
+			release: {
+				'url_prefix': ''
+			}
+		},
+		debug: true
+	};
+	module.exports = CONFIG;
+
+/***/ },
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1573,7 +1668,6 @@ webpackJsonp([0,1],[
 	 * @author icepy
 	 * @info 实体管理类
 	 */
-	var warn = __webpack_require__(4);
 	var Tools = __webpack_require__(11);
 	var baseModelSort = [];
 	
@@ -1617,7 +1711,6 @@ webpackJsonp([0,1],[
 	 */
 	ManagedObject.prototype.$set = function (expression, value, options) {
 	    if (expression === null || expression === undefined) {
-	        warn('存储器不允许传递一个null或者undefined');
 	        return this;
 	    };
 	    if (Tools.isPlainObject(expression)) {
@@ -1663,7 +1756,7 @@ webpackJsonp([0,1],[
 	ManagedObject.prototype.$filter = function (expression, value) {
 	    var data = this.$get(expression);
 	    var result = [];
-	    if (_.isArray(data)) {
+	    if (Tools.isArray(data)) {
 	        var i = data.length;
 	        var n;
 	        while (i--) {
@@ -1703,7 +1796,7 @@ webpackJsonp([0,1],[
 	    // < 小于 false
 	    var data = this.$get(expression);
 	    baseModelSort.length = 0;
-	    if (_.isArray(data)) {
+	    if (Tools.isArray(data)) {
 	        switch (Tools.toType(value)) {
 	            case '[object Function]':
 	                baseModelSort = this._sort(data, value);
@@ -1776,7 +1869,7 @@ webpackJsonp([0,1],[
 	module.exports = ManagedObject;
 
 /***/ },
-/* 20 */
+/* 22 */
 /***/ function(module, exports) {
 
 	// removed by extract-text-webpack-plugin
