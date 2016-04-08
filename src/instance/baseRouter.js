@@ -36,11 +36,11 @@ var BaseRouter = Backbone.Router.extend({
                     curr.destroy();
                     var obj = routerHashTop(curr._router);
                     if (obj) {
-                        routerHashRmove(curr.router);
+                        routerHashRmove(curr._router);
                         stack.splice(stack.indexOf(curr.cid), 1);
                         obj = null;
                     };
-                };
+                }
                 //视图隐藏或者销毁之后
                 if (_.isFunction(router.viewDidDisappear)) {
                     router.viewDidDisappear.call(curr);

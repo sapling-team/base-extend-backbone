@@ -8,7 +8,9 @@
 
 var log = {
 	warn:function(){},
-	error:function(){}
+	error:function(){},
+	info:function(){},
+	dir:function(){}
 };
 if (process.env.NODE_ENV !== 'product') {
 	var hasConsole =  typeof console !== undefined;

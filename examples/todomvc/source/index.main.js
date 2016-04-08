@@ -12,7 +12,7 @@ webpackJsonp([0,1],[
 	
 	_index2.default.start();
 	
-	__webpack_require__(22);
+	__webpack_require__(26);
 
 /***/ },
 /* 1 */
@@ -20,42 +20,37 @@ webpackJsonp([0,1],[
 
 	'use strict';
 	
-	var _BaseRouter = __webpack_require__(2);
+	var _base = __webpack_require__(2);
 	
-	var _BaseRouter2 = _interopRequireDefault(_BaseRouter);
+	var _base2 = _interopRequireDefault(_base);
 	
-	var _setting = __webpack_require__(7);
+	var _main = __webpack_require__(16);
 	
-	var _setting2 = _interopRequireDefault(_setting);
+	var _main2 = _interopRequireDefault(_main);
 	
-	var _list = __webpack_require__(8);
+	var _main3 = __webpack_require__(20);
 	
-	var _list2 = _interopRequireDefault(_list);
+	var _main4 = _interopRequireDefault(_main3);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	var WINDOW = window;
-	var BACKBONE = WINDOW.Backbone;
-	
-	if (!BACKBONE) {
-	    throw new Error('import Backbone now!!~');
-	}
-	var AppRouter = _BaseRouter2.default.extend({
+	var BaseRouter = _base2.default.Router;
+	var AppRouter = BaseRouter.extend({
 	    routes: {
 	        'index': 'indexRouter',
-	        'setting/:id': 'settingRouter'
+	        'list/:id': 'listRouter'
 	    },
 	    indexRouter: function indexRouter() {
-	        this.addLifeCycleHelper('index', _list2.default);
+	        this.addLifeCycleHelper('index', _main2.default);
 	    },
-	    settingRouter: function settingRouter(id) {
-	        this.addLifeCycleHelper('setting-' + id, _setting2.default, id);
+	    listRouter: function listRouter(id) {
+	        this.addLifeCycleHelper('list-' + id, _main4.default, id);
 	    }
 	});
 	module.exports = {
 	    start: function start() {
-	        WINDOW.router = new AppRouter();
-	        BACKBONE.$ = window.$;
+	        window.router = new AppRouter();
+	        Backbone.$ = window.$;
 	        Backbone.history.start();
 	    }
 	};
@@ -64,388 +59,21 @@ webpackJsonp([0,1],[
 /* 2 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/**
-	 * @time 2016年3月21日
-	 * @author icepy
-	 * @info 基于路由的生命周期
-	 */
-	
 	'use strict';
 	
-	var Backbone = __webpack_require__(3);
-	var warn = __webpack_require__(4);
-	var stack = [];
-	var routerHash = {};
-	var curr = null;
-	var router = null;
-	var routerHashTop = function routerHashTop(key) {
-	    return routerHash[key];
+	var BaseView = __webpack_require__(3);
+	var BaseModel = __webpack_require__(12);
+	var BaseRouter = __webpack_require__(14);
+	var ManagedObject = __webpack_require__(15);
+	module.exports = {
+	    'View': BaseView,
+	    'Model': BaseModel,
+	    'Router': BaseRouter,
+	    'ManagedObject': ManagedObject
 	};
-	var routerHashRmove = function routerHashRmove(key) {
-	    delete routerHash[key];
-	};
-	var BaseRouter = Backbone.Router.extend({
-	    addLifeCycleHelper: function addLifeCycleHelper(name, view, parameter) {
-	        var top = routerHashTop(name);
-	        var stackCheckHandler = function stackCheckHandler() {
-	            if (curr) {
-	                //视图隐藏或者销毁之前
-	                if (_.isFunction(router.viewWillDisappear)) {
-	                    router.viewWillDisappear.call(curr);
-	                } else {
-	                    if (router.dealloc) {
-	                        warn('销毁实例{dealloc = true}之前必须存在viewWillDisappear，在此进行解除其他对象的引用或者调用（每个）destroy方法');
-	                    };
-	                };
-	                if (router.dealloc) {
-	                    //进入实例销毁流程
-	                    curr.destroy();
-	                    var obj = routerHashTop(curr._router);
-	                    if (obj) {
-	                        routerHashRmove(curr.router);
-	                        stack.splice(stack.indexOf(curr.cid), 1);
-	                        obj = null;
-	                    };
-	                };
-	                //视图隐藏或者销毁之后
-	                if (_.isFunction(router.viewDidDisappear)) {
-	                    router.viewDidDisappear.call(curr);
-	                };
-	            }
-	        };
-	        if (top) {
-	            stackCheckHandler();
-	            curr = null;
-	            curr = top;
-	            curr.trigger('viewWillAppear');
-	        } else {
-	            stackCheckHandler();
-	            curr = parameter ? new view({
-	                '$parameter': parameter
-	            }) : new view();
-	            stack.push(curr.cid);
-	            curr._router = name;
-	            curr._didLoad = false; //记录viewDidLoad跟随路由呈现的生命周期状态
-	            router = curr.router;
-	            routerHash[name] = curr;
-	            //视图呈现的生命周期只会触发一次
-	            curr.once('viewDidLoad', function () {
-	                if (_.isFunction(router.viewDidLoad)) {
-	                    router.viewDidLoad.call(curr);
-	                } else {
-	                    warn('基于路由的Root Component，必须存在viewDidLoad钩子');
-	                };
-	                if (!curr._didLoad) {
-	                    curr._didLoad = true;
-	                    curr.trigger('viewDidAppear');
-	                };
-	            });
-	            //视图将要呈现之前
-	            curr.on('viewWillAppear', function () {
-	                if (_.isFunction(router.viewWillAppear)) {
-	                    router.viewWillAppear.call(curr);
-	                } else {
-	                    warn('基于路由的Root Component，必须存在viewWillAppear');
-	                };
-	                if (!curr._didLoad) {
-	                    //viewDidLoad事件还未触发
-	                    curr.trigger('viewDidLoad');
-	                } else {
-	                    curr.trigger('viewDidAppear');
-	                };
-	            });
-	            //视图已经呈现之后
-	            curr.on('viewDidAppear', function () {
-	                if (_.isFunction(router.viewDidAppear)) {
-	                    router.viewDidAppear.call(curr);
-	                } else {
-	                    warn('基于路由的Root Component，必须存在viewDidAppear');
-	                };
-	            });
-	            curr.trigger('viewWillAppear');
-	        }
-	        return curr;
-	    }
-	});
-	module.exports = BaseRouter;
 
 /***/ },
 /* 3 */
-/***/ function(module, exports) {
-
-	module.exports = window.Backbone;
-
-/***/ },
-/* 4 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * @time 2012年10月26日
-	 * @author icepy
-	 * @info 完成warn包装
-	 */
-	
-	'use strict';
-	
-	var log = __webpack_require__(5);
-	
-	var warn = function warn(msg, e) {
-	  log.warn(msg, e);
-	};
-	module.exports = warn;
-
-/***/ },
-/* 5 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {/**
-	 * @time 2012年10月26日
-	 * @author icepy
-	 * @info debug信息打印
-	 */
-	
-	'use strict';
-	
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
-	
-	var log = {
-		warn: function warn() {},
-		error: function error() {}
-	};
-	if (process.env.NODE_ENV !== 'product') {
-		var hasConsole = (typeof console === 'undefined' ? 'undefined' : _typeof(console)) !== undefined;
-		log.warn = function (msg, e) {
-			if (hasConsole) {
-				console.warn('[YYT PC Warning]:' + msg);
-				if (e) {
-					throw e;
-				} else {
-					var warning = new Error('Warning Stack Trace');
-					console.warn(warning.stack);
-				}
-			};
-		};
-		log.error = function (msg) {
-			var error = new Error(msg);
-			throw error.stack;
-		};
-		log.info = function (msg) {
-			if (hasConsole) {
-				console.info('[YYT PC INFO]' + msg);
-			}
-		};
-		log.dir = function (tag) {
-			var arr = document.querySelectorAll(tag);
-			if (arr && arr.length) {
-				arr.forEach(function (element) {
-					console.dir(element);
-				});
-			}
-		};
-	}
-	module.exports = log;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)))
-
-/***/ },
-/* 6 */
-/***/ function(module, exports) {
-
-	// shim for using process in browser
-	
-	var process = module.exports = {};
-	var queue = [];
-	var draining = false;
-	var currentQueue;
-	var queueIndex = -1;
-	
-	function cleanUpNextTick() {
-	    draining = false;
-	    if (currentQueue.length) {
-	        queue = currentQueue.concat(queue);
-	    } else {
-	        queueIndex = -1;
-	    }
-	    if (queue.length) {
-	        drainQueue();
-	    }
-	}
-	
-	function drainQueue() {
-	    if (draining) {
-	        return;
-	    }
-	    var timeout = setTimeout(cleanUpNextTick);
-	    draining = true;
-	
-	    var len = queue.length;
-	    while(len) {
-	        currentQueue = queue;
-	        queue = [];
-	        while (++queueIndex < len) {
-	            if (currentQueue) {
-	                currentQueue[queueIndex].run();
-	            }
-	        }
-	        queueIndex = -1;
-	        len = queue.length;
-	    }
-	    currentQueue = null;
-	    draining = false;
-	    clearTimeout(timeout);
-	}
-	
-	process.nextTick = function (fun) {
-	    var args = new Array(arguments.length - 1);
-	    if (arguments.length > 1) {
-	        for (var i = 1; i < arguments.length; i++) {
-	            args[i - 1] = arguments[i];
-	        }
-	    }
-	    queue.push(new Item(fun, args));
-	    if (queue.length === 1 && !draining) {
-	        setTimeout(drainQueue, 0);
-	    }
-	};
-	
-	// v8 likes predictible objects
-	function Item(fun, array) {
-	    this.fun = fun;
-	    this.array = array;
-	}
-	Item.prototype.run = function () {
-	    this.fun.apply(null, this.array);
-	};
-	process.title = 'browser';
-	process.browser = true;
-	process.env = {};
-	process.argv = [];
-	process.version = ''; // empty string to avoid regexp issues
-	process.versions = {};
-	
-	function noop() {}
-	
-	process.on = noop;
-	process.addListener = noop;
-	process.once = noop;
-	process.off = noop;
-	process.removeListener = noop;
-	process.removeAllListeners = noop;
-	process.emit = noop;
-	
-	process.binding = function (name) {
-	    throw new Error('process.binding is not supported');
-	};
-	
-	process.cwd = function () { return '/' };
-	process.chdir = function (dir) {
-	    throw new Error('process.chdir is not supported');
-	};
-	process.umask = function() { return 0; };
-
-
-/***/ },
-/* 7 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-/***/ },
-/* 8 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var _BaseView = __webpack_require__(9);
-	
-	var _BaseView2 = _interopRequireDefault(_BaseView);
-	
-	var _create = __webpack_require__(14);
-	
-	var _create2 = _interopRequireDefault(_create);
-	
-	var _index = __webpack_require__(16);
-	
-	var _index2 = _interopRequireDefault(_index);
-	
-	var _create3 = __webpack_require__(17);
-	
-	var _create4 = _interopRequireDefault(_create3);
-	
-	var _ManagedObject = __webpack_require__(21);
-	
-	var _ManagedObject2 = _interopRequireDefault(_ManagedObject);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	var manager = new _ManagedObject2.default();
-	var IndexView = _BaseView2.default.extend({
-	    el: '#container',
-	    rawLoader: function rawLoader() {
-	        return _index2.default;
-	    },
-	    beforeMount: function beforeMount() {},
-	    afterMount: function afterMount() {},
-	    ready: function ready() {
-	        var props = {
-	            'items': []
-	        };
-	        var state = {
-	            'default': 0
-	        };
-	
-	        var create = new _create2.default({
-	            methods: {},
-	            props: props,
-	            state: state,
-	            parent: this
-	        });
-	        var model = new _create4.default();
-	        model.setChangeURL({
-	            id: '123'
-	        });
-	        model.execute(function (response) {
-	            // console.log(this);
-	            // console.log(response);
-	            // manager.$update(response);
-	            // console.log('$get items',manager.$get('items'))
-	            // console.log('$get debug',manager.$get('debug'))
-	            // console.log('$get trace.warn',manager.$get('trace.warn'))
-	            // manager.$set('trace.warn',{'msg':'msg'})
-	            // console.log('$get 全部的数据',manager.$get())
-	            // var id1 = manager.$filter('items',{"id":1})
-	            // console.log('$filter id=1',id1)
-	            // var id2 = manager.$filter('items',function(v,i){
-	            //     if(v.id == 2){
-	            //         return true
-	            //     }
-	            // })
-	            // console.log('$filter id=2',id2)
-	            // var icepy = manager.$filter('items2','icepy')
-	            // console.log('$filter icepy',icepy)
-	            // var sort1 = manager.$sort('items','id.<')
-	            // console.log('降序',sort1)
-	            // var sort2 = manager.$sort('items','id.>')
-	            // console.log('升序',sort2)
-	            // var sort3 = manager.$sort('items',function(){
-	            //     return true
-	            // });
-	        }, function () {});
-	    },
-	    context: function context(args) {
-	        console.log('index parent', args);
-	    },
-	    router: {
-	        dealloc: true,
-	        viewDidLoad: function viewDidLoad() {},
-	        viewWillAppear: function viewWillAppear() {},
-	        viewDidAppear: function viewDidAppear() {}
-	    }
-	});
-	
-	module.exports = IndexView;
-
-/***/ },
-/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -460,11 +88,15 @@ webpackJsonp([0,1],[
 	
 	'use strict';
 	
-	var Backbone = __webpack_require__(3);
-	var tplEng = __webpack_require__(10);
-	var warn = __webpack_require__(4);
-	var Tools = __webpack_require__(11);
-	var error = __webpack_require__(13);
+	var Backbone = __webpack_require__(4);
+	var tplEng = __webpack_require__(5);
+	var warn = __webpack_require__(6);
+	var Tools = __webpack_require__(9);
+	var error = __webpack_require__(11);
+	var uid = 999;
+	var createID = function createID() {
+		return 'view_' + uid++ + '_' + new Date().getTime() + Math.floor(Math.random(100) * 100);
+	};
 	var BaseView = Backbone.View.extend({
 		initialize: function initialize(options) {
 			//初始化参数
@@ -474,8 +106,10 @@ webpackJsonp([0,1],[
 			} else {
 				warn('推荐使用beforeMount钩子方法，用来初始化自定义属性');
 			};
-			if (this._ICEOptions.id) {
-				this.$el = $(this._ICEOptions.id);
+			if (this.router) {
+				this.id = createID();
+				this.$el.append('<div id="' + this.id + '"></div>');
+				this.$el = this.$el.find('#' + this.id);
 			};
 			this._ICEinit();
 			return this;
@@ -486,13 +120,11 @@ webpackJsonp([0,1],[
 				if (this._template) {
 					this.$el.append(this._template);
 				};
-			} else {
-				warn('推荐使用rawLoader钩子方法用来加载需要动态获取的模板');
-			};
+			}
 			if (typeof this.afterMount === 'function') {
 				this.afterMount();
 			} else {
-				warn('推荐使用afterMount钩子方法，用来获取DOM对象');
+				warn('推荐使用afterMount钩子方法，在此钩子方法中来获取DOM对象');
 			};
 			this._ICEObject();
 		},
@@ -620,10 +252,6 @@ webpackJsonp([0,1],[
 	  */
 		destroy: function destroy() {
 			this._ICEOptions = null;
-			this.methods = null;
-			this.props = null;
-			this.state = null;
-			this._store = null;
 			this.$children.length = 0;
 			this.$parent = null;
 			this.$root = null;
@@ -634,7 +262,13 @@ webpackJsonp([0,1],[
 	module.exports = BaseView;
 
 /***/ },
-/* 10 */
+/* 4 */
+/***/ function(module, exports) {
+
+	module.exports = window.Backbone;
+
+/***/ },
+/* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;"use strict";
@@ -785,7 +419,177 @@ webpackJsonp([0,1],[
 	}();
 
 /***/ },
-/* 11 */
+/* 6 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * @time 2012年10月26日
+	 * @author icepy
+	 * @info 完成warn包装
+	 */
+	
+	'use strict';
+	
+	var log = __webpack_require__(7);
+	
+	var warn = function warn(msg, e) {
+	  log.warn(msg, e);
+	};
+	module.exports = warn;
+
+/***/ },
+/* 7 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * @time 2012年10月26日
+	 * @author icepy
+	 * @info debug信息打印
+	 */
+	
+	'use strict';
+	
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+	
+	var log = {
+		warn: function warn() {},
+		error: function error() {},
+		info: function info() {},
+		dir: function dir() {}
+	};
+	if (process.env.NODE_ENV !== 'product') {
+		var hasConsole = (typeof console === 'undefined' ? 'undefined' : _typeof(console)) !== undefined;
+		log.warn = function (msg, e) {
+			if (hasConsole) {
+				console.warn('[YYT PC Warning]:' + msg);
+				if (e) {
+					throw e;
+				} else {
+					var warning = new Error('Warning Stack Trace');
+					console.warn(warning.stack);
+				}
+			};
+		};
+		log.error = function (msg) {
+			var error = new Error(msg);
+			throw error.stack;
+		};
+		log.info = function (msg) {
+			if (hasConsole) {
+				console.info('[YYT PC INFO]' + msg);
+			}
+		};
+		log.dir = function (tag) {
+			var arr = document.querySelectorAll(tag);
+			if (arr && arr.length) {
+				arr.forEach(function (element) {
+					console.dir(element);
+				});
+			}
+		};
+	}
+	module.exports = log;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(8)))
+
+/***/ },
+/* 8 */
+/***/ function(module, exports) {
+
+	// shim for using process in browser
+	
+	var process = module.exports = {};
+	var queue = [];
+	var draining = false;
+	var currentQueue;
+	var queueIndex = -1;
+	
+	function cleanUpNextTick() {
+	    draining = false;
+	    if (currentQueue.length) {
+	        queue = currentQueue.concat(queue);
+	    } else {
+	        queueIndex = -1;
+	    }
+	    if (queue.length) {
+	        drainQueue();
+	    }
+	}
+	
+	function drainQueue() {
+	    if (draining) {
+	        return;
+	    }
+	    var timeout = setTimeout(cleanUpNextTick);
+	    draining = true;
+	
+	    var len = queue.length;
+	    while(len) {
+	        currentQueue = queue;
+	        queue = [];
+	        while (++queueIndex < len) {
+	            if (currentQueue) {
+	                currentQueue[queueIndex].run();
+	            }
+	        }
+	        queueIndex = -1;
+	        len = queue.length;
+	    }
+	    currentQueue = null;
+	    draining = false;
+	    clearTimeout(timeout);
+	}
+	
+	process.nextTick = function (fun) {
+	    var args = new Array(arguments.length - 1);
+	    if (arguments.length > 1) {
+	        for (var i = 1; i < arguments.length; i++) {
+	            args[i - 1] = arguments[i];
+	        }
+	    }
+	    queue.push(new Item(fun, args));
+	    if (queue.length === 1 && !draining) {
+	        setTimeout(drainQueue, 0);
+	    }
+	};
+	
+	// v8 likes predictible objects
+	function Item(fun, array) {
+	    this.fun = fun;
+	    this.array = array;
+	}
+	Item.prototype.run = function () {
+	    this.fun.apply(null, this.array);
+	};
+	process.title = 'browser';
+	process.browser = true;
+	process.env = {};
+	process.argv = [];
+	process.version = ''; // empty string to avoid regexp issues
+	process.versions = {};
+	
+	function noop() {}
+	
+	process.on = noop;
+	process.addListener = noop;
+	process.once = noop;
+	process.off = noop;
+	process.removeListener = noop;
+	process.removeAllListeners = noop;
+	process.emit = noop;
+	
+	process.binding = function (name) {
+	    throw new Error('process.binding is not supported');
+	};
+	
+	process.cwd = function () { return '/' };
+	process.chdir = function (dir) {
+	    throw new Error('process.chdir is not supported');
+	};
+	process.umask = function() { return 0; };
+
+
+/***/ },
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global, module) {/**
@@ -905,10 +709,10 @@ webpackJsonp([0,1],[
 	    };
 	    return tools;
 	});
-	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(12)(module)))
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(10)(module)))
 
 /***/ },
-/* 12 */
+/* 10 */
 /***/ function(module, exports) {
 
 	module.exports = function(module) {
@@ -924,7 +728,7 @@ webpackJsonp([0,1],[
 
 
 /***/ },
-/* 13 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -935,7 +739,7 @@ webpackJsonp([0,1],[
 	
 	'use strict';
 	
-	var log = __webpack_require__(5);
+	var log = __webpack_require__(7);
 	
 	var error = function error(msg, e) {
 	  log.error(msg, e);
@@ -943,119 +747,7 @@ webpackJsonp([0,1],[
 	module.exports = error;
 
 /***/ },
-/* 14 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var _BaseView = __webpack_require__(9);
-	
-	var _BaseView2 = _interopRequireDefault(_BaseView);
-	
-	var _create = __webpack_require__(15);
-	
-	var _create2 = _interopRequireDefault(_create);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	var items = ['点击→播放专题页呈现，包括两侧挂幅前贴片', 'MV播放', '核心模块'];
-	var CreateView = _BaseView2.default.extend({
-	    el: '#list',
-	    events: {
-	        'click .am-list li': 'contextParent'
-	    },
-	    beforeMount: function beforeMount() {},
-	    afterMount: function afterMount() {
-	        this.listContainer = this.$el.find('.am-list');
-	    },
-	    ready: function ready() {
-	        this.initRender();
-	        this.on('github', function (args) {
-	            console.log('children', args);
-	        });
-	    },
-	    initRender: function initRender() {
-	        var html = this.compileHTML(_create2.default, { 'items': items });
-	        this.listContainer.html(html);
-	    },
-	    destroyed: function destroyed() {
-	        console.log(this);
-	    },
-	    beforeDestroy: function beforeDestroy() {
-	        this.listContainer = null; //谁引用谁释放
-	    },
-	    context: function context(args) {
-	        console.log(args);
-	    },
-	    contextParent: function contextParent(e) {
-	        console.log(e);
-	        this.triggerContextHook('root', { "d": 123 });
-	        // this.dispatch('github',{'qwe':456});
-	    }
-	});
-	
-	module.exports = CreateView;
-
-/***/ },
-/* 15 */
-/***/ function(module, exports) {
-
-	module.exports = "{{each items as item i}}\r\n    <li><a>{{item}}</a></li>\r\n{{/each}}\r\n"
-
-/***/ },
-/* 16 */
-/***/ function(module, exports) {
-
-	module.exports = "<div id=\"indexId\" class=\"am-container\">\r\n    <header class=\"header\">\r\n        <span class=\"title\">@icepy Test Todo App</span>\r\n    </header>\r\n    <div id=\"list\" class=\"content\">\r\n        <ul class=\"am-list\">\r\n\r\n        </ul>\r\n    </div>\r\n    <footer class=\"footer\">\r\n        <span class=\"title\">@YYT PC Demo</span>\r\n    </footer>\r\n</div>\r\n"
-
-/***/ },
-/* 17 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * @time {时间}
-	 * @author {编写者}
-	 * @info {实现的功能}
-	 */
-	
-	'use strict';
-	
-	var BaseModel = __webpack_require__(18);
-	
-	var Model = BaseModel.extend({
-		url: '{{url_prefix}}/examples/todomvc/mock/default.json?id={{id}}', //填写请求地址
-		headers: {
-			'Warning': '123'
-		},
-		defaults: function defaults() {
-			return {
-				'github': '123'
-			};
-		},
-		beforeEmit: function beforeEmit(options) {
-			// 如果需要开启对请求数据的本地缓存，可将下列两行注释去掉
-			// this.storageCache = true; //开启本地缓存
-			// this.expiration = 2; //设置缓存过期时间（1表示60*60*1000 一小时）
-		},
-		validate: function validate(attrs) {
-			console.log(attrs);
-		},
-		formatter: function formatter(response) {
-			//formatter方法可以格式化数据
-			return response;
-		}
-	});
-	var shared = null;
-	Model.sharedInstanceModel = function () {
-		if (!shared) {
-			shared = new Model();
-		}
-		return shared;
-	};
-	module.exports = Model;
-
-/***/ },
-/* 18 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -1075,32 +767,18 @@ webpackJsonp([0,1],[
 	
 	'use strict';
 	
-	var Backbone = __webpack_require__(3);
-	var Store = __webpack_require__(19);
-	var Config = __webpack_require__(20);
-	var Tools = __webpack_require__(11);
-	var warn = __webpack_require__(4);
+	var Backbone = __webpack_require__(4);
+	var Store = __webpack_require__(13);
+	var Tools = __webpack_require__(9);
+	var warn = __webpack_require__(6);
 	var uid = 1314;
 	var expiration = Store.expiration;
-	var env = Config.env[Config.scheme];
 	var BaseModel = Backbone.Model.extend({
 		initialize: function initialize(options) {
 			if (_.isFunction(this.beforeEmit)) {
 				this.beforeEmit(options);
 			};
 			this._url = this.url;
-			if (!this.setEnv) {
-				//默认使用内置{url_prefix}处理
-				this._ICESetEnv();
-			};
-		},
-		_ICESetEnv: function _ICESetEnv() {
-			if (/^\{{0,2}(url_prefix)\}{0,2}/.test(this.url)) {
-				this.url = this.url.replace('{{url_prefix}}', env['url_prefix']);
-				this._url = this.url;
-			} else {
-				warn('你应该正确的配置{{url_prefix}}，在你的config.js文件中');
-			}
 		},
 		_ICEFetch: function _ICEFetch(options) {
 			this.fetch(options);
@@ -1364,7 +1042,7 @@ webpackJsonp([0,1],[
 	module.exports = BaseModel;
 
 /***/ },
-/* 19 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global, module) {/**
@@ -1631,34 +1309,119 @@ webpackJsonp([0,1],[
 		};
 		return store;
 	});
-	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(12)(module)))
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(10)(module)))
 
 /***/ },
-/* 20 */
-/***/ function(module, exports) {
+/* 14 */
+/***/ function(module, exports, __webpack_require__) {
 
+	/**
+	 * @time 2016年3月21日
+	 * @author icepy
+	 * @info 基于路由的生命周期
+	 */
+	
 	'use strict';
 	
-	var CONFIG = {
-		scheme: 'alpha',
-		env: {
-			alpha: {
-				'url_prefix': 'http://127.0.0.1:3000'
-				// 'url_prefix':'http://icepy.yinyuetai.com:4000'
-			},
-			beta: {
-				'url_prefix': 'http://beta.com'
-			},
-			release: {
-				'url_prefix': ''
-			}
-		},
-		debug: true
+	var Backbone = __webpack_require__(4);
+	var warn = __webpack_require__(6);
+	var stack = [];
+	var routerHash = {};
+	var curr = null;
+	var router = null;
+	var routerHashTop = function routerHashTop(key) {
+	    return routerHash[key];
 	};
-	module.exports = CONFIG;
+	var routerHashRmove = function routerHashRmove(key) {
+	    delete routerHash[key];
+	};
+	var BaseRouter = Backbone.Router.extend({
+	    addLifeCycleHelper: function addLifeCycleHelper(name, view, parameter) {
+	        var top = routerHashTop(name);
+	        var stackCheckHandler = function stackCheckHandler() {
+	            if (curr) {
+	                //视图隐藏或者销毁之前
+	                if (_.isFunction(router.viewWillDisappear)) {
+	                    router.viewWillDisappear.call(curr);
+	                } else {
+	                    if (router.dealloc) {
+	                        warn('销毁实例{dealloc = true}之前必须存在viewWillDisappear，在此进行解除其他对象的引用或者调用（每个）destroy方法');
+	                    };
+	                };
+	                if (router.dealloc) {
+	                    //进入实例销毁流程
+	                    curr.destroy();
+	                    var obj = routerHashTop(curr._router);
+	                    if (obj) {
+	                        routerHashRmove(curr._router);
+	                        stack.splice(stack.indexOf(curr.cid), 1);
+	                        obj = null;
+	                    };
+	                }
+	                //视图隐藏或者销毁之后
+	                if (_.isFunction(router.viewDidDisappear)) {
+	                    router.viewDidDisappear.call(curr);
+	                };
+	            }
+	        };
+	        if (top) {
+	            stackCheckHandler();
+	            curr = null;
+	            curr = top;
+	            curr.trigger('viewWillAppear');
+	        } else {
+	            stackCheckHandler();
+	            curr = parameter ? new view({
+	                '$parameter': parameter
+	            }) : new view();
+	            stack.push(curr.cid);
+	            curr._router = name;
+	            curr._didLoad = false; //记录viewDidLoad跟随路由呈现的生命周期状态
+	            router = curr.router;
+	            routerHash[name] = curr;
+	            //视图呈现的生命周期只会触发一次
+	            curr.once('viewDidLoad', function () {
+	                if (_.isFunction(router.viewDidLoad)) {
+	                    router.viewDidLoad.call(curr);
+	                } else {
+	                    warn('基于路由的Root Component，必须存在viewDidLoad钩子');
+	                };
+	                if (!curr._didLoad) {
+	                    curr._didLoad = true;
+	                    curr.trigger('viewDidAppear');
+	                };
+	            });
+	            //视图将要呈现之前
+	            curr.on('viewWillAppear', function () {
+	                if (_.isFunction(router.viewWillAppear)) {
+	                    router.viewWillAppear.call(curr);
+	                } else {
+	                    warn('基于路由的Root Component，必须存在viewWillAppear');
+	                };
+	                if (!curr._didLoad) {
+	                    //viewDidLoad事件还未触发
+	                    curr.trigger('viewDidLoad');
+	                } else {
+	                    curr.trigger('viewDidAppear');
+	                };
+	            });
+	            //视图已经呈现之后
+	            curr.on('viewDidAppear', function () {
+	                if (_.isFunction(router.viewDidAppear)) {
+	                    router.viewDidAppear.call(curr);
+	                } else {
+	                    warn('基于路由的Root Component，必须存在viewDidAppear');
+	                };
+	            });
+	            curr.trigger('viewWillAppear');
+	        }
+	        return curr;
+	    }
+	});
+	module.exports = BaseRouter;
 
 /***/ },
-/* 21 */
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1668,7 +1431,7 @@ webpackJsonp([0,1],[
 	 * @author icepy
 	 * @info 实体管理类
 	 */
-	var Tools = __webpack_require__(11);
+	var Tools = __webpack_require__(9);
 	var baseModelSort = [];
 	
 	var ManagedObject = function ManagedObject(options) {
@@ -1869,10 +1632,343 @@ webpackJsonp([0,1],[
 	module.exports = ManagedObject;
 
 /***/ },
+/* 16 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _base = __webpack_require__(2);
+	
+	var _base2 = _interopRequireDefault(_base);
+	
+	var _goto = __webpack_require__(17);
+	
+	var _goto2 = _interopRequireDefault(_goto);
+	
+	var _index = __webpack_require__(19);
+	
+	var _index2 = _interopRequireDefault(_index);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var BaseView = _base2.default.View;
+	var DefaultView = BaseView.extend({
+	    el: '#container',
+	    rawLoader: function rawLoader() {
+	        return _index2.default;
+	    },
+	    beforeMount: function beforeMount() {},
+	    afterMount: function afterMount() {},
+	    ready: function ready() {
+	        this.gotoview = new _goto2.default({
+	            parent: this
+	        });
+	    },
+	    context: function context() {},
+	    router: {
+	        dealloc: true,
+	        viewDidLoad: function viewDidLoad() {},
+	        viewWillAppear: function viewWillAppear() {},
+	        viewDidAppear: function viewDidAppear() {},
+	        viewWillDisappear: function viewWillDisappear() {}
+	    }
+	});
+	
+	module.exports = DefaultView;
+
+/***/ },
+/* 17 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _base = __webpack_require__(2);
+	
+	var _base2 = _interopRequireDefault(_base);
+	
+	var _goto = __webpack_require__(18);
+	
+	var _goto2 = _interopRequireDefault(_goto);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var BaseView = _base2.default.View;
+	var GotoView = BaseView.extend({
+	    el: '#defaultGo',
+	    events: {
+	        'click .default-margin button': 'gotoHandler'
+	    },
+	    rawLoader: function rawLoader() {
+	        return _goto2.default;
+	    },
+	    beforeMount: function beforeMount() {},
+	    afterMount: function afterMount() {},
+	    ready: function ready() {},
+	    gotoHandler: function gotoHandler(e) {
+	        var el = $(e.currentTarget);
+	        var id = el.attr('data-id');
+	        if (id) {
+	            window.router.navigate('list/' + id, {
+	                trigger: true
+	            });
+	        }
+	    }
+	});
+	module.exports = GotoView;
+
+/***/ },
+/* 18 */
+/***/ function(module, exports) {
+
+	module.exports = "<div>\r\n    <img src=\"http://s.amazeui.org/media/i/demos/bw-2014-06-19.jpg\" class=\"am-img-responsive\" alt=\"\"/>\r\n</div>\r\n<div class=\"am-btn-group default-margin\">\r\n    <button type=\"button\" class=\"am-btn am-btn-primary am-radius\" data-id=\"1\">To do</button>\r\n    <button type=\"button\" class=\"am-btn am-btn-primary am-radius\">Setting</button>\r\n</div>\r\n"
+
+/***/ },
+/* 19 */
+/***/ function(module, exports) {
+
+	module.exports = "<div  class=\"am-container\">\r\n    <header class=\"header\">\r\n        <span class=\"title\">@icepy Test Todo App</span>\r\n    </header>\r\n    <div id=\"defaultGo\">\r\n\r\n    </div>\r\n    <footer class=\"footer\">\r\n        <span class=\"title\">@YYT PC Demo</span>\r\n    </footer>\r\n</div>\r\n"
+
+/***/ },
+/* 20 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _base = __webpack_require__(2);
+	
+	var _base2 = _interopRequireDefault(_base);
+	
+	var _create = __webpack_require__(21);
+	
+	var _create2 = _interopRequireDefault(_create);
+	
+	var _index = __webpack_require__(23);
+	
+	var _index2 = _interopRequireDefault(_index);
+	
+	var _create3 = __webpack_require__(24);
+	
+	var _create4 = _interopRequireDefault(_create3);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var BaseView = _base2.default.View;
+	var ManagedObject = _base2.default.ManagedObject;
+	var manager = new ManagedObject();
+	var ListView = BaseView.extend({
+	    el: '#container',
+	    rawLoader: function rawLoader() {
+	        return _index2.default;
+	    },
+	    beforeMount: function beforeMount() {},
+	    afterMount: function afterMount() {},
+	    ready: function ready() {
+	        this.createview = new _create2.default({
+	            parent: this
+	        });
+	    },
+	    context: function context(args) {
+	        console.log('index parent', args);
+	    },
+	    router: {
+	        dealloc: true,
+	        viewDidLoad: function viewDidLoad() {},
+	        viewWillAppear: function viewWillAppear() {},
+	        viewDidAppear: function viewDidAppear() {},
+	        viewWillDisappear: function viewWillDisappear() {}
+	    }
+	});
+	
+	module.exports = ListView;
+
+/***/ },
+/* 21 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _base = __webpack_require__(2);
+	
+	var _base2 = _interopRequireDefault(_base);
+	
+	var _contextRoot = __webpack_require__(28);
+	
+	var _contextRoot2 = _interopRequireDefault(_contextRoot);
+	
+	var _create = __webpack_require__(22);
+	
+	var _create2 = _interopRequireDefault(_create);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var BaseView = _base2.default.View;
+	var items = ['点击→播放专题页呈现，包括两侧挂幅前贴片', 'MV播放', '核心模块'];
+	var CreateView = BaseView.extend({
+	    el: '#list',
+	    events: {
+	        'click .am-list li': 'contextParent',
+	        'click .go-backs': 'goback'
+	    },
+	    beforeMount: function beforeMount() {},
+	    afterMount: function afterMount() {
+	        this.listContainer = this.findDOMNode('.am-list');
+	    },
+	    ready: function ready() {
+	        this.rootview = new _contextRoot2.default({
+	            parent: this
+	        });
+	        this.initRender();
+	        this.on('github', function (args) {
+	            console.log('children', args);
+	        });
+	    },
+	    initRender: function initRender() {
+	        var html = this.compileHTML(_create2.default, { 'items': items });
+	        this.listContainer.html(html);
+	    },
+	    destroyed: function destroyed() {
+	        console.log(this);
+	    },
+	    beforeDestroy: function beforeDestroy() {
+	        this.listContainer = null; //谁引用谁释放
+	    },
+	    context: function context(args) {
+	        console.log(args);
+	    },
+	    contextParent: function contextParent(e) {
+	        this.triggerContextHook({ "d": 123 });
+	    },
+	    goback: function goback() {
+	        window.router.navigate('index', {
+	            trigger: true
+	        });
+	    }
+	});
+	
+	module.exports = CreateView;
+
+/***/ },
 /* 22 */
 /***/ function(module, exports) {
 
+	module.exports = "{{each items as item i}}\r\n    <li><a>{{item}}</a></li>\r\n{{/each}}\r\n"
+
+/***/ },
+/* 23 */
+/***/ function(module, exports) {
+
+	module.exports = "<div class=\"am-container\">\r\n    <header class=\"header\">\r\n        <span class=\"title\">@icepy Test Todo App</span>\r\n    </header>\r\n    <div id=\"list\" class=\"content\">\r\n        <ul class=\"am-list\">\r\n\r\n        </ul>\r\n        <div class=\"am-btn-group go-back go-backs\">\r\n            <button type=\"button\" class=\"am-btn am-btn-primary am-radius\">Back</button>\r\n        </div>\r\n        <div class=\"am-btn-group go-back\" id=\"contextRoot\">\r\n            <button type=\"button\" class=\"am-btn am-btn-primary am-radius send\">{'root':'icepy'} 向Root实例对象发送数据</button>\r\n        </div>\r\n    </div>\r\n    <footer class=\"footer\">\r\n        <span class=\"title\">@YYT PC Demo</span>\r\n    </footer>\r\n</div>\r\n"
+
+/***/ },
+/* 24 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _base = __webpack_require__(2);
+	
+	var _base2 = _interopRequireDefault(_base);
+	
+	var _config = __webpack_require__(25);
+	
+	var _config2 = _interopRequireDefault(_config);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var BaseModel = _base2.default.Model;
+	var env = _config2.default.env[_config2.default.scheme];
+	var Model = BaseModel.extend({
+		url: '{{url_prefix}}/examples/todomvc/mock/default.json?id={{id}}', //填写请求地址
+		headers: {
+			'Warning': '123'
+		},
+		defaults: function defaults() {
+			return {
+				'github': '123'
+			};
+		},
+		beforeEmit: function beforeEmit(options) {
+			// 如果需要开启对请求数据的本地缓存，可将下列两行注释去掉
+			// this.storageCache = true; //开启本地缓存
+			// this.expiration = 2; //设置缓存过期时间（1表示60*60*1000 一小时）
+			if (/^\{{0,2}(url_prefix)\}{0,2}/.test(this.url)) {
+				this.url = this.url.replace('{{url_prefix}}', env['url_prefix']);
+			}
+		},
+		validate: function validate(attrs) {
+			console.log(attrs);
+		},
+		formatter: function formatter(response) {
+			//formatter方法可以格式化数据
+			return response;
+		}
+	});
+	var shared = null;
+	Model.sharedInstanceModel = function () {
+		if (!shared) {
+			shared = new Model();
+		}
+		return shared;
+	};
+	module.exports = Model;
+
+/***/ },
+/* 25 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	var CONFIG = {
+		scheme: 'alpha',
+		env: {
+			alpha: {
+				'url_prefix': 'http://127.0.0.1:3000'
+				// 'url_prefix':'http://icepy.yinyuetai.com:4000'
+			},
+			beta: {
+				'url_prefix': 'http://beta.com'
+			},
+			release: {
+				'url_prefix': ''
+			}
+		},
+		debug: true
+	};
+	module.exports = CONFIG;
+
+/***/ },
+/* 26 */
+/***/ function(module, exports) {
+
 	// removed by extract-text-webpack-plugin
+
+/***/ },
+/* 27 */,
+/* 28 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _base = __webpack_require__(2);
+	
+	var _base2 = _interopRequireDefault(_base);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var BaseView = _base2.default.View;
+	
+	var RootView = BaseView.extend({
+	    el: '#contextRoot',
+	    events: {
+	        'click .send': 'sendData'
+	    },
+	    ready: function ready() {},
+	    sendData: function sendData() {
+	        this.triggerContextHook('root', { 'root': 'icepy' });
+	    }
+	});
+	
+	module.exports = RootView;
 
 /***/ }
 ]);

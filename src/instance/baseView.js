@@ -15,6 +15,10 @@ var tplEng = require('tplEng');
 var warn = require('../util/warn');
 var Tools = require('../util/tools');
 var error = require('../util/error');
+var uid = 999;
+var createID = function(){
+	return 'view_'+(uid++)+'_'+(new Date().getTime())+Math.floor(Math.random(100)*100);
+};
 var BaseView = Backbone.View.extend({
 	initialize:function(options){
 		//初始化参数
@@ -24,8 +28,10 @@ var BaseView = Backbone.View.extend({
 		}else{
 			warn('推荐使用beforeMount钩子方法，用来初始化自定义属性');
 		};
-		if (this._ICEOptions.id) {
-			this.$el = $(this._ICEOptions.id);
+		if (this.router) {
+			this.id = createID();
+			this.$el.append('<div id="'+this.id+'"></div>');
+			this.$el = this.$el.find('#'+this.id);
 		};
 		this._ICEinit();
 		return this;
@@ -36,13 +42,11 @@ var BaseView = Backbone.View.extend({
 			if (this._template) {
 				this.$el.append(this._template);
 			};
-		}else{
-			warn('推荐使用rawLoader钩子方法用来加载需要动态获取的模板');
-		};
+		}
 		if (typeof this.afterMount === 'function') {
 			this.afterMount();
 		}else{
-			warn('推荐使用afterMount钩子方法，用来获取DOM对象');
+			warn('推荐使用afterMount钩子方法，在此钩子方法中来获取DOM对象');
 		};
 		this._ICEObject();
 	},
@@ -170,10 +174,6 @@ var BaseView = Backbone.View.extend({
 	 */
 	destroy:function(){
 		this._ICEOptions = null;
-		this.methods = null;
-		this.props = null;
-		this.state = null;
-		this._store = null;
 		this.$children.length = 0;
 		this.$parent = null;
 		this.$root = null;

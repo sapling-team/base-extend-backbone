@@ -6,8 +6,8 @@
     "scripts": {
         "test": "node ./node_modules/.bin/istanbul cover ./node_modules/mocha/bin/_mocha --colors ./configs/mocha/**/*.test.js",
         "start": "browser-sync start --server --files examples/**/*.*",
-        "build": "WEBPACK=BUILD webpack --colors --config ./configs/webpack/webpack.config.js ",
-        "dev": "WEBPACK=DEV webpack --colors --config ./configs/webpack/webpack.config.js",
+        "build": "WEBPACK=product webpack --colors --config ./configs/webpack/webpack.config.js ",
+        "dev": "WEBPACK=dev webpack --colors --config ./configs/webpack/webpack.config.js",
         "coverage": "cat ./coverage/lcov.info | coveralls",
         "checkdir": "ls -a"
     },

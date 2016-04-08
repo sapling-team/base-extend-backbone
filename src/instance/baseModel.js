@@ -17,29 +17,16 @@
 'use strict';
 var Backbone = require('backbone')
 var Store = require('../store/locationStore');
-var Config = require('config');
 var Tools = require('../util/tools');
 var warn = require('../util/warn');
 var uid = 1314;
 var expiration = Store.expiration;
-var env = Config.env[Config.scheme];
 var BaseModel = Backbone.Model.extend({
 	initialize:function(options){
 		if (_.isFunction(this.beforeEmit)) {
 			this.beforeEmit(options);
 		};
 		this._url = this.url;
-		if (!this.setEnv) { //默认使用内置{url_prefix}处理
-			this._ICESetEnv();
-		};
-	},
-	_ICESetEnv:function(){
-		if (/^\{{0,2}(url_prefix)\}{0,2}/.test(this.url)) {
-			this.url = this.url.replace('{{url_prefix}}',env['url_prefix']);
-			this._url = this.url
-		}else{
-			warn('你应该正确的配置{{url_prefix}}，在你的config.js文件中')
-		}
 	},
 	_ICEFetch:function(options){
 		this.fetch(options);

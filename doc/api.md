@@ -1,10 +1,6 @@
-### API 思维导图
-
-![](https://raw.githubusercontent.com/sapling-team/base-extend-backbone/master/img/base-extend-backbone.png)
-
 ### Model
 
-默认是关闭localStorage缓存的，原则的设计是使用内存缓存，本地缓存需要支持LocalStorage特性（HTML5 API）
+`Model`的扩展并没有改变backbone的使用方式，而是扩展和增加了很多便捷操作请求的方法。默认是关闭localStorage缓存的，原则的设计是使用内存缓存，本地缓存需要支持LocalStorage特性（HTML5 API）
 
 可使用的方法名：execute
 
@@ -77,35 +73,12 @@ Model.sharedInstanceModel = function () {
 module.exports = Model;
 ```
 
-*Hook 属性*
-
-- setEnv：设置为true，可以自定义Url
-
-```JavaScript
-var Model = BaseModel.extend({
-    setEnv:true
-    url:'{{url_prefix}}/examples/todomvc/mock/env.json',//填写请求地址
-    beforeEmit:function(options){
-        // 如果需要开启对请求数据的本地缓存，可将下列两行注释去掉
-        // this.storageCache = true; //开启本地缓存
-        // this.expiration = 2; //设置缓存过期时间（1表示60*60*1000 一小时）
-    },
-    defaultEntity:function(){
-        return {
-            "default":1
-        }
-    },
-    formatter:function(response){
-          //formatter方法可以格式化数据
-        return response;
-    }
-});
-```
 
 *实例属性*
 
 - storageCache：设置为true，可开启本地缓存
 - expiration：设置缓存过期时间（1表示60*60*1000 一小时）
+- headers：设置请求头key/value普通对象
 
 本地缓存`建议`在`beforeEmit`钩子方法中设置，比较好维护。或者，你也可以在外部进行设置（必须在调用execute系列方法之前）
 

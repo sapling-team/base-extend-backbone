@@ -1,6 +1,9 @@
-import BaseView from 'BaseView'
-import cilpTemp from '../../template/list/create.html'
+import base from 'base';
+import ContextRootView from './contextRoot.view';
+import cilpTemp from '../../template/list/create.html';
 
+
+const BaseView = base.View;
 const items = [
     '点击→播放专题页呈现，包括两侧挂幅前贴片',
     'MV播放',
@@ -9,15 +12,19 @@ const items = [
 const CreateView = BaseView.extend({
     el:'#list',
     events:{
-        'click .am-list li':'contextParent'
+        'click .am-list li':'contextParent',
+        'click .go-backs':'goback'
     },
     beforeMount:function(){
 
     },
     afterMount:function(){
-        this.listContainer = this.$el.find('.am-list')
+        this.listContainer = this.findDOMNode('.am-list')
     },
     ready:function(){
+        this.rootview = new ContextRootView({
+            parent:this
+        });
         this.initRender()
         this.on('github',function(args){
             console.log('children',args);
@@ -37,9 +44,12 @@ const CreateView = BaseView.extend({
         console.log(args);
     },
     contextParent:function(e){
-        console.log(e)
-        this.triggerContextHook('root',{"d":123});
-        // this.dispatch('github',{'qwe':456});
+        this.triggerContextHook({"d":123});
+    },
+    goback:function(){
+        window.router.navigate('index',{
+            trigger:true
+        });
     }
 })
 

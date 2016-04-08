@@ -23,5 +23,13 @@
   line-height: 44px;
   padding-left: 10px;
 }
+.default-margin {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+.go-back {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
 
 /*# sourceMappingURL=index.main.css.map*/
