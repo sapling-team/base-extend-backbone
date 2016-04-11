@@ -220,10 +220,19 @@ var sort3 = this.$sort('items',function(){
 - beforeMount：在模板载入到真实dom之前调用
 - afterMount：在模板载入到真实dom之后调用
 - ready：base.View内部初始化完成之后调用
+- beforeDestroy：base.View实例销毁之前
+- destroyed：base.View实例销毁之后
 
 *Context Hook*
 
 - context：上下文钩子函数，可以通过`triggerContextHook`来反向通信
+
+```JavaScript
+this.triggerContextHook({'github':'icepy'}) //默认向父节点发送消息
+
+this.triggerContextHook('root',{'github':'icepy'}) //向root节点发送消息
+
+```
 
 *实例方法*
 
