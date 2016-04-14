@@ -15,11 +15,20 @@ const ListView = BaseView.extend({
 
     },
     afterMount:function(){
-
+        this.title = this.findDOMNode('.dispatch-title');
     },
     ready:function(){
         this.createview = new CreateView({
             parent:this
+        });
+        this.on('animation',function(args){
+            var self = this;
+            setTimeout(function(){
+                self.title.text(args.name);
+                self.title.slideDown('slow');
+            },2000)
+            
+            console.log('main ----',args);
         });
     },
     context:function(args){

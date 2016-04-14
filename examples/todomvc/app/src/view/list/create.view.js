@@ -29,10 +29,20 @@ const CreateView = BaseView.extend({
         this.on('github',function(args){
             console.log('children',args);
         })
+        this.on('animation',function(args){
+            console.log('create view ---',args);
+            var li = $(this.lis[0]);
+            li.fadeOut('slow',function(){
+                li.text(args.name);
+                li.fadeIn('show');
+            });
+            
+        });
     },
     initRender:function(){
         var html = this.compileHTML(cilpTemp,{'items':items})
         this.listContainer.html(html)
+        this.lis = this.findDOMNode('li');
     },
     destroyed:function(){
         console.log(this);

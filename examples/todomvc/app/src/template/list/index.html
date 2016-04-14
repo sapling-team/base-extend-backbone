@@ -3,7 +3,8 @@
         <span class="title">@icepy Test Todo App</span>
     </header>
     <div id="list" class="content">
-        <ul class="am-list">
+        <h1 class="dispatch-title" style="display: none;">第一天记录</h1>
+        <ul class="am-list am-list-static">
 
         </ul>
         <div class="am-btn-group go-back go-backs">
@@ -11,6 +12,7 @@
         </div>
         <div class="am-btn-group go-back" id="contextRoot">
             <button type="button" class="am-btn am-btn-primary am-radius send">{'root':'icepy'} 向Root实例对象发送数据</button>
+            <button type="button" class="am-btn am-btn-primary am-radius dispatch">向上派生事件，并发送数据</button>
         </div>
     </div>
     <footer class="footer">
