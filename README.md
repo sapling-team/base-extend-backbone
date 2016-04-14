@@ -16,6 +16,7 @@ var BaseModel = base.Model;
 var BaseView = base.View;
 var BaseRouter = base.Router;
 var ManagedObject = base.ManagedObject;
+var storage = base.storage
 ```
 
 ### How Use it
@@ -24,7 +25,7 @@ base-extend-backbone只支持require方式载入，所以你必须从npm上下�
 
 recommended build kit：[webpack](https://webpack.github.io/)
 
-`base-extend-backbone` 是基于`backbone`的一个扩展，理论上来说你使用原始的`backbone`来构建你的应用与此扩展并不冲突，如果你想使用此扩展，那么你将拥有一个完整的`View生命周期`，`基于Router的生命周期`和便捷操作`Model`的实例方法。
+`base-extend-backbone` 是基于`backbone`的一个扩展，理论上来说你使用原始的`backbone`来构建你的应用与此扩展并不冲突，如果你想使用此扩展，那么你将拥有一个完整的`View生命周期`，`基于Router的生命周期`，本地缓存的操作和便捷操作`Model`的实例方法。
 
 在此扩展中需要依赖两个`Tag Key`关键字：
 

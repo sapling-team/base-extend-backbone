@@ -53,11 +53,6 @@ var Model = BaseModel.extend({
         // this.storageCache = true; //开启本地缓存
         // this.expiration = 2; //设置缓存过期时间（1表示60*60*1000 一小时）
     },
-    defaultEntity:function(){
-        return {
-            "default":1
-        }
-    },
     formatter:function(response){
           //formatter方法可以格式化数据
         return response;
@@ -137,6 +132,38 @@ model.execute(function(response){
 - setChangeURL：辅助拼接URL，传入一个key/value普通对象
 - setHeaders：辅助设置XHR头，传入一个key/value普通对象或者传入两个字符串key value（JSONP时不可用）
 - setUpdateStore：将实体数据更新到本地缓存
+
+### storage
+
+本地缓存处理对象（localStorage和sessionStorage）
+
+*propetry*
+
+- enabled 判断浏览器是否支持本地缓存
+
+*methods*
+
+- has 根据Key判断是否存在
+- transact 有存储是否成功的回调函数
+- serialize 对象转字符串
+- deserialize 字符串格式化对象
+- set  本地缓存的set方法，用于更新或者插入
+- get 获取本地缓存
+- remove 根据key名删除一个本地缓存
+- clear 清除所有的本地缓存
+- getAll 获取所有的本地缓存
+
+*object*
+
+- expiration
+	- set 存储可以设置过期时间的本地缓存
+	- get 获取有过期时间的本地缓存
+	- getAll 获取所有的
+	- resetSave 重置所有的本地缓存
+- session
+	- set 存储一个会话
+	- get 获取一个会话
+	
 
 ### ManagedObject
 
@@ -237,8 +264,8 @@ this.triggerContextHook('root',{'github':'icepy'}) //向root节点发送消息
 *实例方法*
 
 - compileHTML：编译模板
-- broadcast：触发所有子View实例对象注册的事件
-- dispatch：触发所有父View实例对象注册的事件
+- broadcast：向下派生所有View实例对象注册的事件
+- dispatch：向上派生所有View实例对象注册的事件
 - destroy：销毁当前实例对象（删除DOM，卸载事件监听等）
 - triggerContextHook：触发父实例对象或者root实例对象的上下文钩子事件
 

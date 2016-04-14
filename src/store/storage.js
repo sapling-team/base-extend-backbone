@@ -16,12 +16,12 @@
 	if(typeof exports === 'object' && typeof module === 'object'){
 		module.exports = factory();
 	}else if(typeof exports === 'object'){
-		exports['store'] = factory()
+		exports['storage'] = factory()
 	}else{
 		if (!root.ICEPlugs) {
 			root.ICEPlugs = {};
 		};
-		root.ICEPlugs.store = factory();
+		root.ICEPlugs.storage = factory();
 	};
 })(function() {
 	var store = {};

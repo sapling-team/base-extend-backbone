@@ -16,11 +16,11 @@
 
 'use strict';
 var Backbone = require('backbone')
-var Store = require('../store/locationStore');
+var storage = require('../store/storage');
 var Tools = require('../util/tools');
 var warn = require('../util/warn');
 var uid = 1314;
-var expiration = Store.expiration;
+var expiration = storage.expiration;
 var BaseModel = Backbone.Model.extend({
 	initialize:function(options){
 		if (_.isFunction(this.beforeEmit)) {
@@ -107,7 +107,7 @@ var BaseModel = Backbone.Model.extend({
 	_ICESendMessage:function(message){
 		var self = this;
 		if (this.storageCache && this.expiration){
-			if (!Store.enabled){
+			if (!storage.enabled){
 				this._ICESendHelper(message);
 			}else{
 				var data = expiration.get(this.url);
@@ -134,7 +134,7 @@ var BaseModel = Backbone.Model.extend({
 		};
 		//如果开启了缓存，对数据源进行本地存储
 		if (this.storageCache && this.expiration && !before) {
-			if (Store.enabled){
+			if (storage.enabled){
 				expiration.set(this.url,response,this.expiration);
 			};
 		};
@@ -278,11 +278,11 @@ var BaseModel = Backbone.Model.extend({
 		}
 	},
 	/**
-	 * [setUpdateStore 将实体数据更新到本地缓存]
+	 * [setUpdateStorage 将实体数据更新到本地缓存]
 	 * @return {[type]} [description]
 	 */
-	setUpdateStore:function(){
-		if (Store.enabled){
+	setUpdateStorage:function(){
+		if (storage.enabled){
 			expiration.set(self.url,this.manager.$get(),self.expiration);
 		};
 	}

@@ -10,6 +10,7 @@
 
     /app
         /link 不支持npm的第三方库或者插件
+        /images
         /src
             /model
                 /index
@@ -18,8 +19,8 @@
             /template
                 /index
             /config.js
-        /style
-            /sass
+        /stylesheets
+            /scss
         /index.html
 
 **普通页面**
@@ -27,7 +28,7 @@
     /app
         其他目录与单页应用相同
         /web
-            index.html
+            index.jade
 
 非常推荐使用`webpack`来构建你的应用，我们应该在对应的生命周期中完成你的业务逻辑。`beforeMount`来初始化你的自定义属性，`afterMount`来获取你View内的DOM元素对象，推荐使用`findDOMNode`方法来获取DOM元素对象，`ready`你的业务逻辑的开始。
 
