@@ -29,14 +29,16 @@ var WowerModel = BaseModel.extend({
 });
 ```
 
-execute使用双回调来描述成功与失败：
+execute系列的方法都将返回一个promise对象（jQuery实现的Promise A）：
 
 ```JavaScript
 var model = new WowerModel();
-model.execute(function(response,model){
-    //成功
-},function(error){
-    //失败
+var promise = model.execute();
+promise.done(function(){
+
+});
+promise.fail(function(){
+
 });
 ```
 
@@ -98,15 +100,17 @@ var model = new ListModel();
 第一个参数要求传入一个对象，可以自定义配置请求（包括URL，参数），如果是`GET`方法，要求你自己拼接参数
 
 ```JavaScript
-model.execute({
+var promise = model.execute({
     type:'POST',
     url:'http://127.0.0.1.com/aip',
     HTTPBody:{}
-},function(){
+});
+promise.done(function(){
 
-},function(e){
+});
+promise.fail(function(){
 
-})
+});
 ```
 
 使用方式二：
@@ -114,11 +118,13 @@ model.execute({
 双回调，默认使用`GET`
 
 ```JavaScript
-model.execute(function(response){
+var promise = model.execute();
+promise.done(function(){
 
-},function(e){
+});
+promise.fail(function(){
 
-})
+});
 ```
 
 - executeGET：发起一个GET请求，传入success，error的callback，两个参数
@@ -163,7 +169,7 @@ model.execute(function(response){
 - session
 	- set 存储一个会话
 	- get 获取一个会话
-	
+
 
 ### ManagedObject
 

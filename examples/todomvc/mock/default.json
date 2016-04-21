@@ -1,23 +1,5 @@
 {
-    "items": [{
-        "id": 1,
-        "name": "icepy"
-    }, {
-        "id": 0,
-        "name": "wen"
-    }, {
-        "id": 2,
-        "name": "xiang"
-    }],
-    "debug": "test version",
-    "trace": {
-        "warn": {
-            "msg": "wenwen.xiang"
-        }
-    },
-    "items2": [
-        "icepy",
-        "icepy",
-        "wen"
-    ]
+  "item": {
+    "id": 1
+  }
 }

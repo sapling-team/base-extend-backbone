@@ -37,50 +37,32 @@ var BaseModel = Backbone.Model.extend({
 	_ICEDestroy:function(options){
 		this.destroy(options);
 	},
-	_ICEJSONP:function(parameter,success,error){
-		var self = this;
-		var jsonpXHR = $.ajax({
+	_ICEJSONP:function(parameter,options){
+		$.ajax($.extend({
 			url:this.url,
 			data:parameter || {},
 			dataType:'jsonp',
 			jsonp:'callback'
-		});
-		jsonpXHR.done(function(response,state,xhr){
-			response = self._ICEProcessData(response);
-			if (_.isFunction(success)) {
-				success.call(self,response,state,xhr);
-			};
-		});
-		jsonpXHR.fail(function(xhr,state,errors){
-			if (_.isFunction(error)) {
-				error.call(self,xhr,state,errors);
-			};
-		});
+		},options));
 	},
-	_ICESendHelper:function(message){
+	_ICESendHelper:function(message,defer){
 		var self = this;
 		if (message.url) {
 			//如果存在url，将this的url替换
 			this.url = message.url;
 		};
 		var options = {};
-		if (message.type !== 'JSONP') {
-			options.beforeSend = function(xhr,setting){
-				for(var key in this.headers){
-					xhr.setRequestHeader(key,this.headers[key]);
-				}
-			};
-			options.success = function(model,response,afterSetting){
-				response = self._ICEProcessData(response);
-				if (_.isFunction(message.success)) {
-					message.success.call(self,response,afterSetting.xhr);
-				};
+		options.beforeSend = function(xhr,setting){
+			for(var key in this.headers){
+				xhr.setRequestHeader(key,this.headers[key]);
 			}
-			options.error = function(model,xhr){
-				if (_.isFunction(message.error)) {
-					message.error.call(self,xhr);
-				};
-			}
+		};
+		options.success = function(model,response,afterSetting){
+			response = self._ICEProcessData(response);
+			defer.resolve.call(model,response,afterSetting.xhr);
+		}
+		options.error = function(model,xhr){
+			defer.reject.call(model,xhr);
 		}
 		switch(message.type){
 			case 'POST':
@@ -97,34 +79,31 @@ var BaseModel = Backbone.Model.extend({
 				this._ICEDestroy(options);
 				break;
 			case 'JSONP':
-				this._ICEJSONP(message.parameter,message.success,message.error);
+				this._ICEJSONP(message.parameter,options);
 				break;
 			default:
 				this._ICEFetch(options);
 				break;
 		}
 	},
-	_ICESendMessage:function(message){
+	_ICESendMessage:function(message,defer){
 		var self = this;
 		if (this.storageCache && this.expiration){
 			if (!storage.enabled){
-				this._ICESendHelper(message);
+				this._ICESendHelper(message,defer);
 			}else{
 				var data = expiration.get(this.url);
 				if (!data) {
-					this._ICESendHelper(message);
+					this._ICESendHelper(message,defer);
 					return false;
 				};
-				var success = message.success;
-				if (_.isFunction(success)) {
-					setTimeout(function(){
-						data = self._ICEProcessData(data,true);
-						success.call(self,data);
-					},50);
-				}
+				setTimeout(function(){
+					data = self._ICEProcessData(data,true);
+					defer.reslove(data)
+				},50);
 			};
 		}else{
-			this._ICESendHelper(message);
+			this._ICESendHelper(message,defer);
 		};
 	},
 	_ICEProcessData:function(response,before){
@@ -148,6 +127,7 @@ var BaseModel = Backbone.Model.extend({
 	 * @return {[type]}         [description]
 	 */
 	execute:function(){
+		var defer = $.Deferred();
 		var message = {
 			type:'GET'
 		};
@@ -155,13 +135,9 @@ var BaseModel = Backbone.Model.extend({
 		var g = args.splice(0,1)[0];
 		if (Tools.isPlainObject(g)) {
 			message = _.extend(message,g);
-			message.success = args[0];
-			message.error = args[1];
-		}else{
-			message.success = g;
-			message.error = args[0];
 		}
-		this._ICESendMessage(message);
+		this._ICESendMessage(message,defer);
+		return defer.promise();
 	},
 	/**
 	 * [executeGET 发起GET请求]
@@ -169,13 +145,11 @@ var BaseModel = Backbone.Model.extend({
 	 * @param  {[type]} error   [description]
 	 * @return {[type]}         [description]
 	 */
-	executeGET:function(success,error){
+	executeGET:function(){
 		var message = {
-			type:'GET',
-			success:success,
-			error:error
+			type:'GET'
 		};
-		this.execute(message);
+		return this.execute(message);
 	},
 	/**
 	 * [executePOST 发起POST请求]
@@ -184,14 +158,12 @@ var BaseModel = Backbone.Model.extend({
 	 * @param  {[type]} error    [description]
 	 * @return {[type]}          [description]
 	 */
-	executePOST:function(HTTPBody,success,error){
+	executePOST:function(HTTPBody){
 		var message = {
 			type:'POST',
-			HTTPBody:HTTPBody,
-			success:success,
-			error:error
+			HTTPBody:HTTPBody
 		};
-		this.execute(message);
+		return this.execute(message);
 	},
 	/**
 	 * [executePUT 发起PUT请求]
@@ -200,14 +172,12 @@ var BaseModel = Backbone.Model.extend({
 	 * @param  {[type]} error    [description]
 	 * @return {[type]}          [description]
 	 */
-	executePUT:function(HTTPBody,success,error){
+	executePUT:function(HTTPBody){
 		var message = {
 			type:'PUT',
-			HTTPBody:HTTPBody,
-			success:success,
-			error:error
+			HTTPBody:HTTPBody
 		};
-		this.execute(message);
+		return this.execute(message);
 	},
 	/**
 	 * [executeDELETE 发起delete请求]
@@ -215,11 +185,9 @@ var BaseModel = Backbone.Model.extend({
 	 */
 	executeDELETE:function(){
 		var message = {
-			type:'DELETE',
-			success:success,
-			error:error
+			type:'DELETE'
 		};
-		this.execute(message);
+		return this.execute(message);
 	},
 	/**
 	 * [executeJSONP 发起JSONP跨域请求]
@@ -227,14 +195,12 @@ var BaseModel = Backbone.Model.extend({
 	 * @param  {[type]} error   [description]
 	 * @return {[type]}         [description]
 	 */
-	executeJSONP:function(parameter,success,error){
+	executeJSONP:function(parameter){
 		var message = {
 			type:'JSONP',
-			success:success,
-			error:error,
 			parameter:parameter
 		};
-		this.execute(message);
+		return this.execute(message);
 	},
 	/**
 	 * [setChangeURL 辅助拼接URL参数]
