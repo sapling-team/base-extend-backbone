@@ -79,7 +79,15 @@ var BaseModel = Backbone.Model.extend({
 				this._ICEDestroy(options);
 				break;
 			case 'JSONP':
-				this._ICEJSONP(message.parameter,options);
+				this._ICEJSONP(message.parameter,{
+					success:function(response,state,xhr){
+						response = self._ICEProcessData(response);
+						defer.resolve.call(self,response,state,xhr);
+					},
+					error:function(xhr,state,errors){
+						defer.reject.call(self,xhr,state,errors);
+					}
+				});
 				break;
 			default:
 				this._ICEFetch(options);
