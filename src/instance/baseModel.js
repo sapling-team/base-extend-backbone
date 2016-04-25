@@ -222,12 +222,12 @@ var BaseModel = Backbone.Model.extend({
 		for(var key in parameter){
 			var value = parameter[key];
 			if (!url.length) {
-				url = this._url.replace('{{'+key+'}}',value);
+				url += '?'+key+'='+value;
 			}else{
-				url = url.replace('{{'+key+'}}',value);
+				url += '&'+key+'='+value;
 			};
 		};
-		this.url = url;
+		this.url = this._url + url;
 	},
 	/**
 	 * [setHeaders 设置XHR 头信息]
